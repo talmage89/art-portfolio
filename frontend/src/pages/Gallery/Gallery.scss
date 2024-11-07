@@ -1,0 +1,15 @@
+.Gallery {
+  max-width: 1600px;
+  margin: 0 auto;
+  display: flex;
+  gap: 6rem;
+  padding: 0 3rem 100px;
+
+  &__left,
+  &__right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+  }
+}

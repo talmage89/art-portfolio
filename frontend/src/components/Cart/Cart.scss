@@ -1,0 +1,180 @@
+@use "src/scss/variables.scss" as *;
+
+.Cart {
+  --padding: 24px;
+
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 500px;
+  padding: 24px 0;
+  // 100vh - padding top and bottom
+  height: calc(100vh - (var(--padding) * 2));
+  background: white;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+  &__header {
+    padding: 0 var(--padding);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    &__title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+      }
+    }
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0; /* Allows flex child to shrink below content size */
+  }
+
+  &__item {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    margin: 0 var(--padding);
+    border-bottom: 1px solid #eee;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &__image {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    &__details {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
+
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+      }
+
+      &__info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      &__price {
+        margin: 0;
+        font-size: 14px;
+        color: #666;
+      }
+
+      &__remove {
+        color: red;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 14px;
+      }
+    }
+  }
+
+  &__footer {
+    padding: 2rem var(--padding) 0;
+    border-top: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2rem;
+
+    &__subtotal {
+      display: flex;
+      gap: 1rem;
+
+      p {
+        font-size: 16px;
+      }
+
+      &__label {
+        color: $gray-light;
+      }
+
+      &__amount {
+        font-weight: 600;
+      }
+    }
+
+    &__checkout {
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      color: $gray-dark;
+      border: 1px solid $gray-dark;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background: $gray-dark;
+        color: white;
+      }
+
+      &:active {
+        background: rgba($gray-dark, 0.9);
+      }
+
+      &:disabled {
+        color: #aaa;
+        border-color: #aaa;
+        cursor: not-allowed;
+
+        &:hover {
+          background: transparent;
+        }
+      }
+    }
+  }
+}

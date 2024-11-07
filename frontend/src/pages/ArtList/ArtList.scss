@@ -1,0 +1,23 @@
+.ArtList {
+  max-width: 1020px;
+  margin: 0 auto;
+  display: flex;
+  gap: 8rem;
+  padding: 0 2rem 100px;
+
+  &__left,
+  &__right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6rem;
+  }
+
+  .ArtCard:hover {
+    .ArtCard__image {
+      &::after {
+        background-color: rgba(white, 0.15);
+      }
+    }
+  }
+}
