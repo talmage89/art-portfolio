@@ -20,7 +20,7 @@ pip install -r requirements.txt
 python manage.py runserver
 ```
 
-On the frontend, to use backend instead of dummy data, create a `.env` file in the root of the frontend directory with the following data:
+On the frontend, to use backend instead of mock data, create a `.env` file in the root of the frontend directory with the following data:
 
 ```
 VITE_API_HOST=http://localhost:8000/
