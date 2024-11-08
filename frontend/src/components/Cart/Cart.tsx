@@ -1,8 +1,9 @@
-import { useNavigate } from "react-router-dom";
-import { ShoppingCart, X } from "lucide-react";
-import { useCartStore } from "~/data";
-import { Artwork } from "~/api";
-import "./Cart.scss";
+import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ShoppingCart, X } from 'lucide-react';
+import { useCartStore } from '~/data';
+import { Artwork, http } from '~/api';
+import './Cart.scss';
 
 interface CartProps {
   items: Artwork[];
@@ -11,14 +12,25 @@ interface CartProps {
 }
 
 export const Cart = (props: CartProps) => {
+  const [loading, setLoading] = React.useState(false);
+
   const navigate = useNavigate();
   const { removeFromCart } = useCartStore();
 
   function centsToDollars(cents: number) {
-    return Number(cents / 100).toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
+    return Number(cents / 100).toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
     });
+  }
+
+  function handleCheckout() {
+    setLoading(true);
+    http
+      .post('/api/create-checkout-session/', { product_ids: props.items.map((item) => item.id) })
+      .then((res) => (window.location.href = res.data.url))
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
   }
 
   if (!props.isOpen) return null;
@@ -58,13 +70,8 @@ export const Cart = (props: CartProps) => {
                   {item.title}
                 </h3>
                 <span className="Cart__item__details__info">
-                  <p className="Cart__item__details__price">
-                    {centsToDollars(item.price_cents)}
-                  </p>
-                  <a
-                    className="Cart__item__details__remove"
-                    onClick={() => removeFromCart(item.id)}
-                  >
+                  <p className="Cart__item__details__price">{centsToDollars(item.price_cents)}</p>
+                  <a className="Cart__item__details__remove" onClick={() => removeFromCart(item.id)}>
                     Remove
                   </a>
                 </span>
@@ -76,16 +83,15 @@ export const Cart = (props: CartProps) => {
           <span className="Cart__footer__subtotal">
             <p className="Cart__footer__subtotal__label">Subtotal:</p>
             <p className="Cart__footer__subtotal__amount">
-              {centsToDollars(
-                props.items.reduce((acc, item) => acc + item.price_cents, 0)
-              )}
+              {centsToDollars(props.items.reduce((acc, item) => acc + item.price_cents, 0))}
             </p>
           </span>
           <button
             className="Cart__footer__checkout"
-            disabled={props.items.length === 0}
+            disabled={props.items.length === 0 || loading}
+            onClick={handleCheckout}
           >
-            Secure Checkout
+            {loading ? 'Loading...' : 'Secure Checkout'}
           </button>
         </div>
       </div>

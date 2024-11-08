@@ -3,21 +3,39 @@ import { Outlet } from "react-router";
 import { ShoppingCart } from "lucide-react";
 import { Cart, Navbar } from "~/components";
 import { useCartStore } from "~/data";
+import { Artwork, ArtworkModel } from "./api";
 import "./index.scss";
 
 export const Layout = () => {
   const [cartOpen, setCartOpen] = React.useState(false);
+  const initialLoadRef = React.useRef(true);
 
   const { cart, setCart } = useCartStore();
 
   React.useEffect(() => {
-    const cartJSON = localStorage.getItem("cart");
-    const cart = cartJSON ? JSON.parse(cartJSON) : [];
-    cart.length && setCart(cart);
-  }, []);
+    if (initialLoadRef.current) {
+      const cartJSON = localStorage.getItem("cart");
+      const cart = cartJSON ? JSON.parse(cartJSON) : [];
 
-  React.useEffect(() => {
-    cart.length && localStorage.setItem("cart", JSON.stringify(cart));
+      Promise.allSettled(
+        cart.map((item: Artwork) =>
+          ArtworkModel.get(item.id).then((artwork) => artwork.data)
+        )
+      ).then((artworks) => {
+        const filteredArtworks = artworks
+          .filter(
+            (promise): promise is PromiseFulfilledResult<Artwork> =>
+              promise.status === "fulfilled" &&
+              promise.value.status === "available"
+          )
+          .map((promise) => promise.value);
+        setCart(filteredArtworks);
+      });
+
+      initialLoadRef.current = false;
+    } else {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
   }, [cart]);
 
   return (

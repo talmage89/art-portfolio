@@ -1,27 +1,31 @@
-import { RouteObject } from "react-router-dom";
-import { About, ArtDetail, ArtList, Gallery } from "~/pages";
-import { Layout } from "./layout";
+import { RouteObject } from 'react-router-dom';
+import { About, ArtDetail, ArtList, CheckoutReturn, Gallery } from '~/pages';
+import { Layout } from './layout';
 
 export const routes: RouteObject[] = [
   {
-    path: "/",
+    path: '/',
     element: <Layout />,
     children: [
       {
-        path: "/",
+        path: '/',
         element: <ArtList />,
       },
       {
-        path: "/about",
+        path: '/about',
         element: <About />,
       },
       {
-        path: "/gallery",
+        path: '/gallery',
         element: <Gallery />,
       },
       {
-        path: "/art/:id",
+        path: '/art/:id',
         element: <ArtDetail />,
+      },
+      {
+        path: '/checkout',
+        element: <CheckoutReturn />,
       },
     ],
   },
