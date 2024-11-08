@@ -5,7 +5,7 @@
 Tech Stack:
 
 - Frontend: Vite, React, Typescript
-- Backend: Django, Django REST Framework, Docker
+- Backend: Django, Django REST Framework, Docker, PostgreSQL
 
 ## Development
 
