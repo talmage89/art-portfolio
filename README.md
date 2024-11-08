@@ -35,6 +35,7 @@ python manage.py runserver
 To have the frontend use the backend instead of mock data, create a `.env` file in the root of the frontend directory with the following data:
 
 ```
+# frontend .env
 VITE_API_HOST=http://localhost:8000/
 VITE_USE_BACKEND=true
 ```
@@ -44,12 +45,14 @@ VITE_USE_BACKEND=true
 For Stripe, you will need to create an account and get an API key. Put the publishable key in the `.env` file in the root of the frontend directory:
 
 ```
+# frontend .env
 VITE_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
 ```
 
 And put the secret key in the `.env` file in the root of the backend directory:
 
 ```
+# backend .env
 STRIPE_SECRET_KEY=your_stripe_secret_key
 ```
 
@@ -65,6 +68,7 @@ stripe listen --forward-to localhost:8000/webhook
 Then add the webhook signing secret to the `.env` file in the root of the backend directory:
 
 ```
+# backend .env
 STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
 ```
 
