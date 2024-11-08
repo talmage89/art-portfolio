@@ -1,28 +1,26 @@
-{% load artwork_tags %}
-Order Confirmation
+Order Received!
 Order ID: {{ order.id }}
 
 Thank you!
 Your order has been received. We will notify you when it ships.
 
-Order Details:
+ORDER DETAILS
 {% for artwork in artworks %}
 {{ artwork.title }}
 Size: {{ artwork.size }}
 Price: ${{ artwork.price_cents|cents_to_dollars }}
-
 {% endfor %}
 
-Order Summary:
+ORDER SUMMARY
 Subtotal: ${{ order.subtotal_cents|cents_to_dollars }}
 Shipping: ${{ order.shipping_cents|cents_to_dollars }}
 Total: ${{ order.total_cents|cents_to_dollars }}
 
-Shipping Details:
+SHIPPING DETAILS
 {{ order.shipping_name }}
 {{ order.shipping_address_line1 }}
 {% if order.shipping_address_line2 %}{{ order.shipping_address_line2 }}{% endif %}
 {{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_postal_code }}
 {{ order.shipping_country }}
 
-Thank you for your order!
+Please do not reply to this email. This mailbox is not monitored.

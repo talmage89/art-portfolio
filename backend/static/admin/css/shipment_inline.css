@@ -1,0 +1,80 @@
+/* Shipment section styling */
+.inline-related {
+    background: #f8f8f8;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-bottom: 1em;
+    padding: 1em;
+}
+
+/* Fieldset styling */
+.inline-related fieldset {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+/* Field grouping */
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2em;
+    padding: 1em 0 !important;
+    border-bottom: 1px solid #eee;
+}
+
+.form-row > div {
+    flex: 1;
+    min-width: 250px;
+}
+
+/* Labels */
+.inline-related label {
+    color: #666;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+/* Help text */
+.inline-related .help {
+    color: #999;
+    font-size: 0.85em;
+    margin-top: 0.25em;
+}
+
+/* Artwork selection area */
+.field-artworks {
+    margin-top: 1em;
+}
+
+.field-artworks ul {
+    column-count: 3;
+    column-gap: 2em;
+    padding: 1em;
+    background: white;
+    border-radius: 4px;
+}
+
+.field-artworks li {
+    break-inside: avoid;
+    padding: 0.25em 0;
+}
+
+/* Input fields */
+.inline-related input[type="text"],
+.inline-related input[type="url"] {
+    width: 100%;
+    padding: 0.5em;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Section headers */
+.inline-related h3 {
+    background: #f0f0f0;
+    padding: 0.75em;
+    margin: -1em -1em 1em -1em;
+    border-radius: 4px 4px 0 0;
+    font-size: 1em;
+    color: #333;
+} 

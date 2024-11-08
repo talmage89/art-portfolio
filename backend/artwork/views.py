@@ -11,7 +11,7 @@ from .serializers import (
 from utils.mailgun import send_mailgun_email
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from utils.order_emails import send_order_confirmation
+from utils.order_emails import send_order_confirmation, send_shipment_started, send_shipment_completed
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
@@ -46,19 +46,16 @@ class OrderViewSet(viewsets.ModelViewSet):
         return order
 
 
-class PaymentViewSet(viewsets.ModelViewSet):
-    queryset = Payment.objects.all()
-    serializer_class = PaymentSerializer
-
-
 class TestEmailSendView(APIView):
     def get(self, request):
         order = Order.objects.first()
-        send_order_confirmation(order)
+        send_shipment_started(order, order.shipments.first())
         return Response({"message": "Email sent"})
 
 
 class PreviewEmailTemplateView(APIView):
+    TEMPLATE_TO_VIEW = "emails/order_delivered.html"
+
     def get(self, request):
         order = Order.objects.first()
         if not order:
@@ -76,7 +73,8 @@ class PreviewEmailTemplateView(APIView):
             "order": order,
             "artworks": artworks,
             "image_urls": image_urls,
+            "shipment": order.shipments.all()[1],
             "debug": settings.DEBUG,
         }
 
-        return render(request, "emails/order_confirmation.html", context)
+        return render(request, self.TEMPLATE_TO_VIEW, context)

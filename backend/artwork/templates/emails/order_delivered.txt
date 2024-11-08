@@ -1,0 +1,25 @@
+Order Delivered!
+Order ID: {{ order.id }}
+
+Great news!
+Your order has been delivered. Here's what we shipped:
+
+CONTENTS
+{% for artwork in artworks %}
+{{ artwork.title }}
+Size: {{ artwork.size }}
+{% endfor %}
+
+{% if note_from_seller %}
+NOTE FROM THE SELLER:
+{{ note_from_seller }}
+{% endif %}
+
+DELIVERY ADDRESS
+{{ order.shipping_name }}
+{{ order.shipping_address_line1 }}
+{% if order.shipping_address_line2 %}{{ order.shipping_address_line2 }}{% endif %}
+{{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_postal_code }}
+{{ order.shipping_country }}
+
+Please do not reply to this email. This mailbox is not monitored.
