@@ -20,16 +20,30 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework.routers import DefaultRouter
-from artwork.views import ArtworkViewSet, ImageViewSet
+from artwork.views import ArtworkViewSet, ImageViewSet, OrderViewSet, PaymentViewSet
+from payments.views import CreateCheckoutSessionView, SessionStatusView, stripe_webhook
 
 router = DefaultRouter()
 router.register(r"artworks", ArtworkViewSet)
 router.register(r"images", ImageViewSet)
+router.register(r"orders", OrderViewSet)
+router.register(r"payments", PaymentViewSet)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path("api/auth/", include("rest_framework.urls"), name="api-auth"),
+    path(
+        "api/create-checkout-session/",
+        CreateCheckoutSessionView.as_view(),
+        name="create-checkout-session",
+    ),
+    path(
+        "api/session-status/",
+        SessionStatusView.as_view(),
+        name="session-status",
+    ),
+    path("api/webhook/", stripe_webhook, name="webhook"),
 ]
 
 if settings.DEBUG:

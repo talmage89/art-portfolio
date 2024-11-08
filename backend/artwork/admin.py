@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Artwork, Image
+from .models import Artwork, Image, Order, Payment
 
 
 class ImageInline(admin.TabularInline):
@@ -14,6 +14,7 @@ class ArtworkAdmin(admin.ModelAdmin):
 
 admin.site.register(Artwork, ArtworkAdmin)
 admin.site.register(Image)
-
+admin.site.register(Order)
+admin.site.register(Payment)
 
 # Register your models here.

@@ -6,6 +6,8 @@ MIGRATE_LOG
 .pytest_cache
 db.sqlite3
 db-unclaimed.sqlite3
+media/
+TODO.md
 
 
 ### Python template
