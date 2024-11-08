@@ -32,7 +32,7 @@ class ArtworkSerializer(serializers.ModelSerializer):
             "size",
             "price_cents",
             "status",
-            "creation_date",
+            "created_at",
             "images",
         ]
 
@@ -46,11 +46,15 @@ class ArtworkSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     artworks = serializers.SerializerMethodField()
+    payment = serializers.SerializerMethodField()
 
     def get_artworks(self, obj):
         return ArtworkSerializer(
             obj.artworks.all(), many=True, context=self.context
         ).data
+
+    def get_payment(self, obj):
+        return PaymentSerializer(obj.payment, context=self.context).data
 
     class Meta:
         model = Order

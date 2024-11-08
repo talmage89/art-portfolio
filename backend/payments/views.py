@@ -10,6 +10,8 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 
 from artwork.models import Artwork, Order, Payment
+from artwork.serializers import OrderSerializer
+from utils.order_emails import send_order_confirmation
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 webhook_secret = settings.STRIPE_WEBHOOK_SECRET
@@ -57,21 +59,6 @@ class CreateCheckoutSessionView(views.APIView):
         return Response({"url": session.url}, status=status.HTTP_200_OK)
 
 
-class SessionStatusView(views.APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request, *args, **kwargs):
-        session_id = request.query_params["session_id"]
-        session = stripe.checkout.Session.retrieve(session_id)
-        return Response(
-            {
-                "status": session.status,
-                "customer_email": session.customer_details.email,
-            },
-            status=status.HTTP_200_OK,
-        )
-
-
 def create_order(session):
     product_ids_str = session["metadata"].get("product_ids", "")
     product_ids = [uuid.UUID(id) for id in product_ids_str.split(",") if id]
@@ -79,6 +66,7 @@ def create_order(session):
     artworks = Artwork.objects.filter(id__in=product_ids)
 
     order_data = {
+        'session_id': session.get("id"),
         'customer_email': session.get("customer_details", {}).get("email"),
         'shipping_rate_id': session.get("shipping_cost", {}).get("shipping_rate"),
         'shipping_name': session.get("shipping_details", {}).get("name"),
@@ -88,18 +76,31 @@ def create_order(session):
         'shipping_postal_code': session.get("shipping_details", {}).get("address", {}).get("postal_code"),
         'shipping_state': session.get("shipping_details", {}).get("address", {}).get("state"),
         'shipping_country': session.get("shipping_details", {}).get("address", {}).get("country"),
+        'subtotal_cents': session.get("amount_subtotal"),
+        'shipping_cents': session.get("total_details", {}).get("amount_shipping"),
         'total_cents': session.get("amount_total"),
         'currency': session.get("currency"),
-        'status': session.get("payment_status") == "paid" and "processing" or "pending",
+        "status": session.get("payment_status") == "paid" and "processing" or "pending",
     }
 
-    order, _ = Order.objects.update_or_create(
-        session_id=session["id"],
-        defaults=order_data
-    )
+    def apply_artworks_to_order(order, artworks):
+        for artwork in artworks:
+            artwork.order = order
+            artwork.status = "sold"
+            artwork.save()
 
-    artworks.update(status="sold")
-    order.artworks.set(artworks)
+    if Order.objects.filter(session_id=session.id).exists():
+        order = Order.objects.get(session_id=session.id)
+        serializer = OrderSerializer(instance=order, data=order_data)
+        serializer.is_valid(raise_exception=True)
+        order = serializer.save()
+        apply_artworks_to_order(order, artworks)
+    else:
+        serializer = OrderSerializer(data=order_data)
+        serializer.is_valid(raise_exception=True)
+        order = serializer.save()
+        apply_artworks_to_order(order, artworks)
+        send_order_confirmation(order)
 
     return order
 
@@ -110,50 +111,38 @@ def fulfill_order(event_type, session):
     if event_type == "checkout.session.completed":
         order = create_order(session)
 
+        payment_data = {
+            'stripe_payment_intent_id': session.get("payment_intent"),
+            'subtotal_cents': session.get("amount_subtotal"),
+            'shipping_cents': session.get("total_details", {}).get("amount_shipping"),
+            'shipping_stripe_id': session.get("shipping_cost", {}).get("shipping_rate"),
+            'total_cents': session.get("amount_total"),
+            'currency': session.get("currency"),
+        }
+
         if session.get("payment_status") == "paid":
             order = Order.objects.get(session_id=session_id)
-            Payment.objects.create(
-                order=order,
-                stripe_payment_intent_id=session.get("payment_intent"),
-                subtotal_cents=session.get("amount_subtotal"),
-                shipping_cents=session.get("total_details", {}).get("amount_shipping"),
-                shipping_stripe_id=session.get("shipping_cost", {}).get("shipping_rate"),
-                total_cents=session.get("amount_total"), 
-                currency=session.get("currency"),
-                status="succeeded"
-            )
+            payment_data['order'] = order
+            payment_data['status'] = "succeeded"
+            Payment.objects.create(**payment_data)
 
     elif event_type == "checkout.session.async_payment_succeeded":
         order = Order.objects.get(session_id=session_id)
         order.status = "processing"
         order.save()
 
-        Payment.objects.create(
-            order=order,
-            stripe_payment_intent_id=session.get("payment_intent"),
-            subtotal_cents=session.get("amount_subtotal"),
-            shipping_cents=session.get("total_details", {}).get("amount_shipping"),
-            shipping_stripe_id=session.get("shipping_cost", {}).get("shipping_rate"),
-            total_cents=session.get("amount_total"),
-            currency=session.get("currency"),
-            status="succeeded"
-        )
+        payment_data['order'] = order
+        payment_data['status'] = "succeeded"
+        Payment.objects.create(**payment_data)
 
     elif event_type == "checkout.session.async_payment_failed":
         order = Order.objects.get(session_id=session_id)
         order.status = "failed"
         order.save()
 
-        Payment.objects.create(
-            order=order,
-            stripe_payment_intent_id=session.get("payment_intent"),
-            subtotal_cents=session.get("amount_subtotal"),
-            shipping_cents=session.get("total_details", {}).get("amount_shipping"),
-            shipping_stripe_id=session.get("shipping_cost", {}).get("shipping_rate"),
-            total_cents=session.get("amount_total"),
-            currency=session.get("currency"),
-            status="failed"
-        )
+        payment_data['order'] = order
+        payment_data['status'] = "failed"
+        Payment.objects.create(**payment_data)
 
     elif event_type == "checkout.session.expired":
         try:

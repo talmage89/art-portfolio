@@ -20,14 +20,17 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework.routers import DefaultRouter
-from artwork.views import ArtworkViewSet, ImageViewSet, OrderViewSet, PaymentViewSet
-from payments.views import CreateCheckoutSessionView, SessionStatusView, stripe_webhook
+from artwork.views import (
+    ArtworkViewSet,
+    ImageViewSet,
+    TestEmailSendView,
+    PreviewEmailTemplateView,
+)
+from payments.views import CreateCheckoutSessionView, stripe_webhook
 
 router = DefaultRouter()
 router.register(r"artworks", ArtworkViewSet)
 router.register(r"images", ImageViewSet)
-router.register(r"orders", OrderViewSet)
-router.register(r"payments", PaymentViewSet)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -38,12 +41,17 @@ urlpatterns = [
         CreateCheckoutSessionView.as_view(),
         name="create-checkout-session",
     ),
+    path("api/stripe-webhook/", stripe_webhook, name="stripe-webhook"),
     path(
-        "api/session-status/",
-        SessionStatusView.as_view(),
-        name="session-status",
+        "api/test-send-email/",
+        TestEmailSendView.as_view(),
+        name="test-send-email",
     ),
-    path("api/webhook/", stripe_webhook, name="webhook"),
+    path(
+        "api/preview-email/",
+        PreviewEmailTemplateView.as_view(),
+        name="preview-email",
+    ),
 ]
 
 if settings.DEBUG:
