@@ -208,10 +208,10 @@
           </div>
           {% endfor %}
         {% endif %}
-        {% if order.shipments.count > 1 %}
+        {% if order.artworks.count != shipment.artworks.count %}
         <h3>Note:</h3>
         <div class="note-from-seller">
-          <p>Your order is being shipped in {{ order.shipments.count }} separate packages.</p>
+          <p>Your order is being shipped in multiple packages.</p>
         </div>
         {% endif %}
         {% if shipment %}

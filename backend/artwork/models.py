@@ -1,7 +1,10 @@
 import uuid
 from django.db import models
 from django.core.exceptions import ValidationError
-from utils.order_emails import send_shipment_started
+from django.db import transaction
+from django.utils import timezone
+
+from utils.order_emails import send_shipment_started, send_shipment_completed
 
 
 class Order(models.Model):
@@ -62,6 +65,11 @@ class Payment(models.Model):
 
 
 class Shipment(models.Model):
+    STATUS_CHOICES = [
+        ("shipped", "Shipped"),
+        ("delivered", "Delivered"),
+    ]
+
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="shipments")
     shipping_via = models.CharField(max_length=200)
     expected_delivery_days = models.CharField(max_length=200, null=True, blank=True)
@@ -69,36 +77,52 @@ class Shipment(models.Model):
     tracking_number = models.CharField(max_length=200, null=True, blank=True)
     tracking_url = models.URLField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
-    def save(self, *args, **kwargs):
-        is_new = self.pk is None
-        super().save(*args, **kwargs)
-
-        if not is_new and self.artworks.exists():
-            invalid_artworks = self.artworks.exclude(
-                id__in=self.order.artworks.values_list("id", flat=True)
-            )
-            if invalid_artworks.exists():
-                raise ValidationError(
-                    {"artworks": "All artworks must be from the associated order"}
-                )
-
-        if (
-            self.order.status == "processing"
-            and self.artworks.filter(shipment__isnull=True).count() == 0
-        ):
-            print("Updating order status to shipped")
-            self.order.status = "shipped"
-            self.order.save()
-            send_shipment_started(self.order, self)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="shipped")
+    shipment_started_email_sent_at = models.DateTimeField(null=True, blank=True)
+    shipment_completed_email_sent_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"Shipment #{self.pk}"
 
+    def save(self, *args, **kwargs):
+        is_new = self._state.adding
+        super().save(*args, **kwargs)
+        
+        if is_new:
+            return
+
+        self.refresh_from_db()
+        
+        if self.artworks.all().count() == 0:
+            raise ValidationError("Shipment must have at least one artwork")
+
+        # Send emails if they haven't been sent yet
+        if self.shipment_started_email_sent_at is None:
+            send_shipment_started(self.order, self)
+            self.shipment_started_email_sent_at = timezone.now()
+            super().save(update_fields=["shipment_started_email_sent_at"])
+        if self.status == "delivered" and self.shipment_completed_email_sent_at is None:
+            send_shipment_completed(self.order, self)
+            self.shipment_completed_email_sent_at = timezone.now()
+            super().save(update_fields=["shipment_completed_email_sent_at"])
+
+        # Update order status
+        unshipped_order_artworks = self.order.artworks.filter(shipment__isnull=True)
+        if self.order.status == "processing" and unshipped_order_artworks.count() == 0:
+            self.order.status = "shipped"
+            self.order.save()
+        elif self.order.shipments.exclude(status="delivered").count() == 0:
+            self.order.status = "completed"
+            self.order.save()
+
 
 class Artwork(models.Model):
-    STATUS_CHOICES = [("available", "Available"), ("sold", "Sold"), ("unavailable", "Unavailable")]
-    
+    STATUS_CHOICES = [
+        ("available", "Available"),
+        ("sold", "Sold"),
+        ("unavailable", "Unavailable"),
+    ]
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     sort_order = models.IntegerField(default=0)
     title = models.CharField(max_length=200)
@@ -117,7 +141,6 @@ class Artwork(models.Model):
         related_name="artworks",
     )
 
-
     class Meta:
         ordering = ["sort_order"]
 
@@ -130,7 +153,7 @@ class Artwork(models.Model):
                 "Artwork can only be assigned to shipments from the same order"
             )
         super().save(*args, **kwargs)
-    
+
     def get_image_dimensions(self):
         main_images = self.images.filter(is_main_image=True)
         if main_images.exists():

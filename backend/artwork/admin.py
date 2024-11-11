@@ -21,20 +21,17 @@ class ShipmentInlineForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Get the parent order, either from instance or from inline formset
         parent_order = None
         if self.instance and self.instance.order_id:
             parent_order = self.instance.order
         elif hasattr(self, "parent_instance"):
             parent_order = self.parent_instance
 
-        # Set queryset based on parent order
         if parent_order:
             self.fields["artworks"].queryset = Artwork.objects.filter(
                 order=parent_order
             )
 
-            # Pre-select currently assigned artworks if this is an existing shipment
             if self.instance and self.instance.pk:
                 self.initial["artworks"] = self.instance.artworks.all()
 
@@ -44,12 +41,14 @@ class ShipmentInlineForm(forms.ModelForm):
             instance.save()
 
             selected_artworks = self.cleaned_data["artworks"]
-
             for artwork in selected_artworks:
                 artwork.shipment = instance
                 artwork.save()
+            instance.artworks.exclude(id__in=[a.id for a in selected_artworks]).update(
+                shipment=None
+            )
 
-            instance.artworks.exclude(id__in=[a.id for a in selected_artworks]).update(shipment=None)
+            instance.save()
 
         return instance
 
@@ -61,6 +60,7 @@ class ShipmentInlineForm(forms.ModelForm):
             "expected_delivery_date",
             "tracking_number",
             "tracking_url",
+            "status",
             "artworks",
         ]
 
@@ -72,12 +72,11 @@ class ShipmentInline(admin.StackedInline):
     verbose_name = "Shipment"
     verbose_name_plural = "Shipments"
 
-    def get_formset(self, request, obj=None, **kwargs):
-        formset = super().get_formset(request, obj, **kwargs)
-        formset.form.parent_instance = obj
-        return formset
-
     fieldsets = (
+        (
+            "Status",
+            {"fields": ("status",), "classes": ("wide",)},
+        ),
         (
             "Shipping Details",
             {
@@ -95,7 +94,11 @@ class ShipmentInline(admin.StackedInline):
         ("Items", {"fields": ("artworks",), "classes": ("wide",)}),
     )
 
-    classes = ["collapse"]
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super().get_formset(request, obj, **kwargs)
+        formset.form.parent_instance = obj
+        return formset
+
 
     class Media:
         css = {"all": ("admin/css/shipment_inline.css",)}
@@ -106,14 +109,7 @@ class ArtworkAdmin(admin.ModelAdmin):
     list_display = ["__str__", "sort_order", "size", "price_cents", "status"]
     list_filter = ["status", "created_at"]
     search_fields = ["title"]
-    fields = [
-        "title",
-        "sort_order",
-        "size", 
-        "price_cents",
-        "status",
-        "shipment"
-    ]
+    fields = ["title", "sort_order", "size", "price_cents", "status", "shipment"]
 
 
 class ImageAdmin(admin.ModelAdmin):
@@ -156,7 +152,8 @@ class OrderAdmin(admin.ModelAdmin):
                     "total_cents",
                     "currency",
                     "status",
-                )
+                ),
+                "classes": ("collapse",),
             },
         ),
         (
@@ -215,7 +212,7 @@ class ShipmentAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Artwork, ArtworkAdmin)
-admin.site.register(Image, ImageAdmin)
 admin.site.register(Order, OrderAdmin)
+admin.site.register(Image, ImageAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(Shipment, ShipmentAdmin)

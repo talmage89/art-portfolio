@@ -26,13 +26,11 @@ def send_order_email(order, template_name, subject, shipment=None):
         "image_urls": image_urls,
     }
 
-    if shipment:
+    if shipment is not None:
         context["shipment"] = shipment
 
     text_content = render_to_string(f"emails/{template_name}.txt", context)
     html_content = render_to_string(f"emails/{template_name}.html", context)
-
-    subject = f"{subject} #{order.id}"
 
     send_mailgun_email(
         subject=subject,
@@ -47,7 +45,6 @@ def send_order_email(order, template_name, subject, shipment=None):
 
 
 def send_order_confirmation(order):
-    print(order)
     send_order_email(order, "order_confirmation", "Your order has been received!")
 
 

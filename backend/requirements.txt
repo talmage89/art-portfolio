@@ -1,13 +1,20 @@
+# Django and Django-related packages
 Django==5.1.3
-psycopg>=3.1.8
-Pillow
-
 djangorestframework
-markdown
 django-filter
 django-cors-headers
 django-environ
 
-stripe
+# Database
+psycopg>=3.1.8
 
+# Image processing
+Pillow
+
+# Utilities
+markdown
 requests
+
+# Payment and shipping
+stripe
+shippo

@@ -188,7 +188,7 @@
       </div>
       <div class="order-details">
         <h2>Great news!</h2>
-        <p>Your order has been delivered. Here's what we delivered:</p>
+        <p>Your order has arrived. Here's what we delivered:</p>
 
         <h3>Package Summary</h3>
         {% if shipment and shipment.artworks.exists %}
@@ -208,10 +208,10 @@
           </div>
           {% endfor %}
         {% endif %}
-        {% if order.shipments.count > 1 %}
+        {% if order.artworks.count != shipment.artworks.count %}
         <h3>Note:</h3>
         <div class="note-from-seller">
-          <p>Your order is being shipped in {{ order.shipments.count }} separate packages. Packages may be delivered separately.</p>
+          <p>Your order is being shipped in at least {{ order.shipments.count }} separate packages. Packages may be delivered separately.</p>
         </div>
         {% endif %}
         <h3>Delivery Address</h3>

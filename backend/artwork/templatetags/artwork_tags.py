@@ -17,5 +17,4 @@ def cents_to_dollars(cents):
 
 @register.filter
 def get_item(dictionary, key):
-    print(dictionary, key)
     return dictionary.get(key)

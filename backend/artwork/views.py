@@ -63,12 +63,13 @@ class OrderViewSet(viewsets.ModelViewSet):
 class TestEmailSendView(APIView):
     def get(self, request):
         order = Order.objects.first()
-        send_order_confirmation(order)
+        shipment = order.shipments.first()
+        send_shipment_started(order, shipment)
         return Response({"message": "Email sent"})
 
 
 class PreviewEmailTemplateView(APIView):
-    TEMPLATE_TO_VIEW = "emails/order_confirmation.html"
+    TEMPLATE_TO_VIEW = "emails/order_shipped.html"
 
     def get(self, request):
         order = Order.objects.first()
@@ -76,6 +77,7 @@ class PreviewEmailTemplateView(APIView):
             return HttpResponse("No orders found to preview")
 
         artworks = order.artworks.all()
+        shipment = order.shipments.first()
         image_urls = {}
         for artwork in artworks:
             if artwork.images.exists():
@@ -87,6 +89,7 @@ class PreviewEmailTemplateView(APIView):
             "order": order,
             "artworks": artworks,
             "image_urls": image_urls,
+            "shipment": shipment,
             "debug": settings.DEBUG,
         }
 
