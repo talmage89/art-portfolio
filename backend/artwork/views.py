@@ -1,5 +1,16 @@
+import django_filters
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.conf import settings
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.parsers import MultiPartParser, FormParser
+from utils.order_emails import (
+    send_order_confirmation,
+    send_shipment_started,
+    send_shipment_completed,
+)
 from .models import Artwork, Image, Order, Payment
 from .permissions import IsAdminOrReadOnly
 from .serializers import (
@@ -8,20 +19,23 @@ from .serializers import (
     OrderSerializer,
     PaymentSerializer,
 )
-from utils.mailgun import send_mailgun_email
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from utils.order_emails import send_order_confirmation, send_shipment_started, send_shipment_completed
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.conf import settings
+
+
+class ArtworkFilter(django_filters.FilterSet):
+    status = django_filters.ChoiceFilter(choices=Artwork.STATUS_CHOICES)
+
+    class Meta:
+        model = Artwork
+        fields = ["status"]
 
 
 class ArtworkViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]    
     queryset = Artwork.objects.all()
     serializer_class = ArtworkSerializer
     parser_classes = (MultiPartParser, FormParser)
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_class = ArtworkFilter
 
     def perform_create(self, serializer):
         artwork = serializer.save()
@@ -49,12 +63,12 @@ class OrderViewSet(viewsets.ModelViewSet):
 class TestEmailSendView(APIView):
     def get(self, request):
         order = Order.objects.first()
-        send_shipment_started(order, order.shipments.first())
+        send_order_confirmation(order)
         return Response({"message": "Email sent"})
 
 
 class PreviewEmailTemplateView(APIView):
-    TEMPLATE_TO_VIEW = "emails/order_delivered.html"
+    TEMPLATE_TO_VIEW = "emails/order_confirmation.html"
 
     def get(self, request):
         order = Order.objects.first()
@@ -73,7 +87,6 @@ class PreviewEmailTemplateView(APIView):
             "order": order,
             "artworks": artworks,
             "image_urls": image_urls,
-            "shipment": order.shipments.all()[1],
             "debug": settings.DEBUG,
         }
 

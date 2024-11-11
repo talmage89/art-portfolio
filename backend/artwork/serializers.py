@@ -18,11 +18,15 @@ class ImageSerializer(serializers.ModelSerializer):
 
 class ArtworkSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
+    image_dimensions = serializers.SerializerMethodField()
 
     def get_images(self, obj):
         images = obj.images.all()
         sorted_images = sorted(images, key=lambda x: not x.is_main_image)
         return ImageSerializer(sorted_images, many=True, context=self.context).data
+
+    def get_image_dimensions(self, obj):
+        return obj.get_image_dimensions()
 
     class Meta:
         model = Artwork
@@ -33,6 +37,7 @@ class ArtworkSerializer(serializers.ModelSerializer):
             "price_cents",
             "status",
             "created_at",
+            "image_dimensions",
             "images",
         ]
 

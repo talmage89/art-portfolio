@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.core.exceptions import ValidationError
+from utils.order_emails import send_shipment_started
 
 
 class Order(models.Model):
@@ -31,16 +32,6 @@ class Order(models.Model):
         ],
     )
     created_at = models.DateTimeField(auto_now_add=True)
-
-    def save(self, *args, **kwargs):
-        if self.shipments.exists():
-            unshipped_artworks = self.artworks.filter(shipment__isnull=True)
-            print(unshipped_artworks.count())
-            if unshipped_artworks.count() == 0:
-                self.status = "shipped"
-            else:
-                self.status = "processing"
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Order made by {self.customer_email}"
@@ -92,19 +83,28 @@ class Shipment(models.Model):
                     {"artworks": "All artworks must be from the associated order"}
                 )
 
+        if (
+            self.order.status == "processing"
+            and self.artworks.filter(shipment__isnull=True).count() == 0
+        ):
+            print("Updating order status to shipped")
+            self.order.status = "shipped"
+            self.order.save()
+            send_shipment_started(self.order, self)
+
     def __str__(self):
         return f"Shipment #{self.pk}"
 
 
 class Artwork(models.Model):
+    STATUS_CHOICES = [("available", "Available"), ("sold", "Sold"), ("unavailable", "Unavailable")]
+    
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     sort_order = models.IntegerField(default=0)
     title = models.CharField(max_length=200)
     size = models.CharField(max_length=200)
     price_cents = models.IntegerField()
-    status = models.CharField(
-        max_length=20, choices=[("available", "Available"), ("sold", "Sold")]
-    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     order = models.ForeignKey(
         Order, on_delete=models.SET_NULL, null=True, blank=True, related_name="artworks"
@@ -116,6 +116,7 @@ class Artwork(models.Model):
         blank=True,
         related_name="artworks",
     )
+
 
     class Meta:
         ordering = ["sort_order"]
@@ -129,6 +130,14 @@ class Artwork(models.Model):
                 "Artwork can only be assigned to shipments from the same order"
             )
         super().save(*args, **kwargs)
+    
+    def get_image_dimensions(self):
+        main_images = self.images.filter(is_main_image=True)
+        if main_images.exists():
+            return (main_images.first().image.width, main_images.first().image.height)
+        elif self.images.exists():
+            return (self.images.first().image.width, self.images.first().image.height)
+        return None
 
 
 class Image(models.Model):

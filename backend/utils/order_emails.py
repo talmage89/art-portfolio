@@ -2,6 +2,11 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from .mailgun import send_mailgun_email
 
+from artwork.templatetags.artwork_tags import cents_to_dollars, get_item
+from django.template.defaultfilters import register
+
+register.filter("cents_to_dollars", cents_to_dollars)
+register.filter("get_item", get_item)
 
 USE_TESTING_EMAIL = True
 
@@ -19,8 +24,10 @@ def send_order_email(order, template_name, subject, shipment=None):
         "order": order,
         "artworks": artworks,
         "image_urls": image_urls,
-        "shipment": shipment,
     }
+
+    if shipment:
+        context["shipment"] = shipment
 
     text_content = render_to_string(f"emails/{template_name}.txt", context)
     html_content = render_to_string(f"emails/{template_name}.html", context)
@@ -40,6 +47,7 @@ def send_order_email(order, template_name, subject, shipment=None):
 
 
 def send_order_confirmation(order):
+    print(order)
     send_order_email(order, "order_confirmation", "Your order has been received!")
 
 
@@ -48,4 +56,6 @@ def send_shipment_started(order, shipment):
 
 
 def send_shipment_completed(order, shipment):
-    send_order_email(order, "order_delivered", "Your order has been delivered!", shipment)
+    send_order_email(
+        order, "order_delivered", "Your order has been delivered!", shipment
+    )

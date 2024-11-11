@@ -32,12 +32,11 @@ python manage.py runserver
 
 ### General
 
-To have the frontend use the backend instead of mock data, create a `.env` file in the root of the frontend directory with the following data:
+Create a `.env` file in the root of the frontend directory with the following data:
 
 ```
 # frontend .env
 VITE_API_HOST=http://localhost:8000/
-VITE_USE_BACKEND=true
 ```
 
 ### Stripe
