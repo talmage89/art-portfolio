@@ -21,3 +21,22 @@
     }
   }
 }
+
+@media (max-width: 1020px) {
+  .ArtList {
+    gap: 4rem;
+
+    &__left,
+    &__right {
+      gap: 2rem;
+    }
+  }
+}
+
+@media (max-width: 720px) {
+  .ArtList {
+    flex-direction: column;
+    padding: 0 1rem 2rem;
+    gap: 2rem;
+  }
+}

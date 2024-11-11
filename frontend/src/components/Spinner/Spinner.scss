@@ -1,0 +1,30 @@
+@use 'src/scss/variables' as *;
+
+.Spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+
+  &__circle {
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    border-style: solid;
+    border-width: 5px;
+    border-color: #eee #eee transparent transparent;
+  }
+
+  & p {
+    color: $gray-light;
+  }
+}
+
+@keyframes spin {
+  0% { 
+    transform: rotate(0deg); 
+  }
+  100% { 
+    transform: rotate(360deg); 
+  }
+}

@@ -1,4 +1,5 @@
 @use "src/scss/variables" as *;
+@use "src/scss/animations" as *;
 
 .ArtViewer {
   position: fixed;
@@ -11,6 +12,7 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
 
   &__content {
     position: relative;
@@ -22,8 +24,8 @@
 
   &__close {
     position: absolute;
-    top: 10px;
-    right: -40px;
+    top: -40px;
+    right: 10px;
     display: flex;
     justify-content: center;
     align-items: center;

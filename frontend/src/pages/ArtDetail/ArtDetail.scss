@@ -1,9 +1,11 @@
-@use "src/scss/variables" as *;
+@use 'src/scss/variables' as *;
 
 .ArtDetail {
   max-width: 1140px;
   margin: 0 auto;
-  padding: 0 0 2rem;
+  padding: 0 2rem 2rem;
+  box-sizing: border-box;
+  width: 100%;
 
   &__back {
     margin-bottom: 2rem;
@@ -24,6 +26,7 @@
     flex: 1 1 0;
     display: flex;
     gap: 1rem;
+    width: 100%;
 
     &__thumbnails {
       flex: 1 1 70px;
@@ -34,6 +37,8 @@
 
       &__thumbnail {
         max-height: 80px;
+        max-width: 80px;
+        min-width: 80px;
         cursor: pointer;
         position: relative;
 
@@ -44,7 +49,7 @@
         }
 
         &::after {
-          content: "";
+          content: '';
           position: absolute;
           top: 0;
           left: 0;
@@ -74,6 +79,9 @@
 
       & img {
         width: 100%;
+        height: auto;
+        max-width: 100%;
+        display: block;
       }
     }
   }
@@ -130,6 +138,74 @@
         &:hover {
           background-color: $gray-light;
         }
+      }
+    }
+  }
+}
+
+@media (max-width: 1020px) {
+  .ArtDetail {
+    padding: 0 1rem 2rem;
+
+    &__main {
+      flex-direction: column;
+    }
+  }
+}
+
+@media (max-width: 720px) {
+  .ArtDetail {
+    &__back {
+      margin: 1rem 0;
+    }
+
+    &__info {
+      flex: unset;
+      width: 100%;
+
+      &__title {
+        word-break: break-word;
+        hyphens: auto;
+      }
+
+      &__note {
+        word-wrap: break-word;
+        max-width: 100%;
+      }
+    }
+
+    &__images {
+      flex: unset;
+      flex-direction: column-reverse;
+      width: 100%;
+      overflow: hidden;
+
+      &__main {
+        flex: unset;
+        width: 100%;
+      }
+
+      &__thumbnails {
+        max-width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        width: 100%;
+        overflow: hidden;
+
+        &__thumbnail {
+          flex-shrink: 0;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 481px) and (max-width: 484px) {
+  .ArtDetail {
+    &__info {
+      &__title, &__note {
+        max-width: calc(100vw - 4rem);
       }
     }
   }

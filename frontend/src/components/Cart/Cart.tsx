@@ -49,35 +49,39 @@ export const Cart = (props: CartProps) => {
           </button>
         </div>
         <div className="Cart__content">
-          {props.items.map((item) => (
-            <div key={item.id} className="Cart__item">
-              <img
-                src={item.images[0].image}
-                alt={item.title}
-                className="Cart__item__image"
-                onClick={() => {
-                  props.onClose();
-                  navigate(`/art/${item.id}`);
-                }}
-              />
-              <div className="Cart__item__details">
-                <h3
+          {props.items.length === 0 ? (
+            <p className="Cart__empty">Your cart is empty.</p>
+          ) : (
+            props.items.map((item) => (
+              <div key={item.id} className="Cart__item">
+                <img
+                  src={item.images[0].image}
+                  alt={item.title}
+                  className="Cart__item__image"
                   onClick={() => {
                     props.onClose();
                     navigate(`/art/${item.id}`);
                   }}
-                >
-                  {item.title}
-                </h3>
-                <span className="Cart__item__details__info">
-                  <p className="Cart__item__details__price">{centsToDollars(item.price_cents)}</p>
-                  <a className="Cart__item__details__remove" onClick={() => removeFromCart(item.id)}>
-                    Remove
-                  </a>
-                </span>
+                />
+                <div className="Cart__item__details">
+                  <h3
+                    onClick={() => {
+                      props.onClose();
+                      navigate(`/art/${item.id}`);
+                    }}
+                  >
+                    {item.title}
+                  </h3>
+                  <span className="Cart__item__details__info">
+                    <p className="Cart__item__details__price">{centsToDollars(item.price_cents)}</p>
+                    <a className="Cart__item__details__remove" onClick={() => removeFromCart(item.id)}>
+                      Remove
+                    </a>
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
         <div className="Cart__footer">
           <span className="Cart__footer__subtotal">

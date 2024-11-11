@@ -1,15 +1,20 @@
-@use "src/scss/variables.scss" as *;
+@use 'src/scss/variables.scss' as *;
+@use 'src/scss/animations.scss' as *;
 
 .Navbar {
+  background-color: white;
   padding: 40px 0 50px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 36px;
+  position: relative;
+  z-index: 100;
 
   &__title {
     font-size: 32px;
     font-weight: 600;
+    text-align: center;
   }
 
   &__links {
@@ -18,7 +23,7 @@
     gap: 44px;
 
     & a {
-      font-family: "Roboto Mono", monospace;
+      font-family: 'Roboto Mono', monospace;
       font-size: 14px;
       color: $gray-light;
       text-decoration: none;
@@ -30,5 +35,123 @@
         color: $gray-dark;
       }
     }
+  }
+
+  &__menu {
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+}
+
+.Navbar__modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 90;
+  background-color: rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.Navbar__modal {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+  animation: slideFromTop 0.2s ease-out;
+  
+  &__content {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.5rem 1rem 2rem;
+    font-family: 'Roboto Mono', monospace;
+
+    & > a {
+      color: $gray-light;
+      text-decoration: none;
+      font-size: 16px;
+      transition: color 0.2s ease-in-out;
+      user-select: none;
+
+      &:hover,
+      &.active {
+        color: $gray-dark;
+      }
+    }
+    &__cart {
+      background: $gray-dark;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 2rem;
+      cursor: pointer;
+      color: white;
+      font-size: 16px;
+      font-family: inherit;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background-color: rgba($gray-dark, 0.8);
+      }
+    }
+  }
+}
+
+@media (max-width: 720px) {
+  .Navbar {
+    padding: 2rem 0;
+    
+    &__container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    &__title {
+      font-size: 28px;
+    }
+
+    &__links {
+      display: none;
+    }
+
+    &__menu {
+      display: flex;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .Navbar__title {
+    align-self: flex-start;
+    text-align: left;
+    padding-left: 16px;
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 340px) {
+  .Navbar__title {
+    font-size: 20px;
   }
 }

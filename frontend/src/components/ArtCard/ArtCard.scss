@@ -1,4 +1,5 @@
-@use "src/scss/variables" as *;
+@use 'src/scss/variables' as *;
+@use 'sass:math';
 
 .ArtCard {
   width: 100%;
@@ -19,7 +20,7 @@
     }
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       top: 0;
       left: 0;
@@ -27,6 +28,35 @@
       height: 100%;
       background-color: unset;
       transition: background-color 0.3s ease-in-out;
+    }
+
+    &:has(&__dimensions) {
+      &::after {
+        display: none;
+      }
+    }
+
+    &__dimensions {
+      background-color: #f0f0f0;
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
+        animation: shimmer 2s infinite;
+      }
+
+      @keyframes shimmer {
+        100% {
+          left: 150%;
+        }
+      }
     }
   }
 
@@ -41,5 +71,30 @@
     color: $gray-light;
     font-size: 14px;
     margin-top: 1rem;
+  }
+}
+
+@media (max-width: 1020px) {
+  .ArtCard {
+    &__price {
+      margin-top: 0.5rem;
+    }
+  }
+}
+
+@media (max-width: 720px) {
+  .ArtCard {
+    &__price {
+      margin-top: 0.25rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .ArtCard {
+    &__title {
+      font-size: 20px;
+      margin-top: 1rem;
+    }
   }
 }

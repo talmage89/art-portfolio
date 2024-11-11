@@ -6,6 +6,7 @@ export type Artwork = {
   images: Image[];
   status: string;
   creation_date: string;
+  image_dimensions?: [number, number];  
 };
 
 export type Image = {

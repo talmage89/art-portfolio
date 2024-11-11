@@ -3,7 +3,7 @@
   margin: 0 auto;
   display: flex;
   gap: 6rem;
-  padding: 0 3rem 100px;
+  padding: 0 3rem 50px;
 
   &__left,
   &__right {
@@ -11,5 +11,45 @@
     display: flex;
     flex-direction: column;
     gap: 4rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .Gallery {
+    gap: 3rem;
+
+    &__left,
+    &__right {
+      gap: 3rem;
+    }
+  }
+}
+
+@media (max-width: 1020px) {
+  .Gallery {
+    gap: 2rem;
+    padding: 0 1rem 2rem;
+
+    &__left,
+    &__right {
+      gap: 2rem;
+    }
+  }
+}
+
+@media (max-width: 720px) {
+  .Gallery {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .Gallery {
+    gap: 1rem;
+
+    &__left,
+    &__right {
+      gap: 1rem;
+    }
   }
 }

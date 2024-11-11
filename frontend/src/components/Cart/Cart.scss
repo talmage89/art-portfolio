@@ -1,4 +1,5 @@
 @use "src/scss/variables.scss" as *;
+@use "src/scss/animations.scss" as *;
 
 .Cart {
   --padding: 24px;
@@ -7,6 +8,7 @@
   top: 0;
   right: 0;
   width: 500px;
+  max-width: 100%;
   padding: 24px 0;
   // 100vh - padding top and bottom
   height: calc(100vh - (var(--padding) * 2));
@@ -15,6 +17,7 @@
   z-index: 1000;
   display: flex;
   flex-direction: column;
+  animation: slideFromRight 0.2s ease-out;
 
   &__overlay {
     position: fixed;
@@ -24,6 +27,7 @@
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     z-index: 999;
+    animation: fadeIn 0.2s ease-out;
   }
 
   &__header {
@@ -44,6 +48,13 @@
         font-weight: 600;
       }
     }
+  }
+
+  &__empty {
+    margin: 0;
+    font-size: 16px;
+    color: $gray-light;
+    padding: 0 var(--padding);
   }
 
   &__close {

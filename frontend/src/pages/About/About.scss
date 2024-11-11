@@ -14,6 +14,29 @@
     &__image {
       flex: 1 1 0;
 
+      &__placeholder {
+        background-color: #f0f0f0;
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 50%;
+          height: 100%;
+          background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
+          animation: shimmer 2s infinite;
+        }
+  
+        @keyframes shimmer {
+          100% {
+            left: 150%;
+          }
+        }
+      }
+
       & img {
         width: 100%;
         height: 100%;
@@ -25,7 +48,7 @@
       flex: 1 1 0;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 0.5rem;
 
       &__title {
         font-size: 21px;
@@ -35,10 +58,15 @@
       &__subtitle {
         font-size: 13px;
         color: $gray-light;
+        margin-top: 1rem;
       }
 
       &__handle {
         font-size: 13px;
+
+        & a {
+          text-decoration: none;
+        }
       }
     }
   }
@@ -63,6 +91,48 @@
         font-size: 13px;
         color: $gray-light;
         line-height: 1.6;
+      }
+    }
+  }
+}
+
+@media (max-width: 1020px) {
+  .About {
+    padding-bottom: 50px;
+
+    &__content {
+      flex-direction: column;
+    }
+  }
+}
+
+@media (max-width: 720px) {
+  .About {
+    padding: 0 1rem 2rem;
+
+
+
+    &__hero {
+      flex-direction: column;
+      padding: 2rem 0 0;
+
+      &__info {
+        gap: 0.25rem;
+
+        &__subtitle {
+          margin-top: 0.5rem;
+        }
+      }
+    }
+
+    &__content {
+      gap: 2rem;
+      margin-top: 3rem;
+
+      &__section {
+        &__title {
+          font-size: 18px;
+        }
       }
     }
   }

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 import { Cart, Navbar } from "~/components";
 import { useCartStore } from "~/data";
@@ -9,6 +9,7 @@ import "./index.scss";
 export const Layout = () => {
   const [cartOpen, setCartOpen] = React.useState(false);
   const initialLoadRef = React.useRef(true);
+  const location = useLocation();
 
   const { cart, setCart } = useCartStore();
 
@@ -38,9 +39,13 @@ export const Layout = () => {
     }
   }, [cart]);
 
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
+
   return (
     <div className="Layout">
-      <Navbar />
+      <Navbar onCartOpen={() => setCartOpen(true)} />
       <div className="Layout__cartBadge" onClick={() => setCartOpen(true)}>
         <div className="Layout__cartBadge__data">
           <ShoppingCart className="Layout__cartBadge__data__icon" />
