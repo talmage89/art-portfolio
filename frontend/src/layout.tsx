@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
-import { Cart, Footer, Navbar } from "~/components";
+import { Cart, Navbar } from "~/components";
 import { useCartStore } from "~/data";
 import { Artwork, ArtworkModel } from "./api";
 import "./index.scss";
