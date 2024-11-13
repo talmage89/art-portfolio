@@ -8,8 +8,6 @@ from django.template.defaultfilters import register
 register.filter("cents_to_dollars", cents_to_dollars)
 register.filter("get_item", get_item)
 
-USE_TESTING_EMAIL = True
-
 
 def send_order_email(order, template_name, subject, shipment=None):
     artworks = order.artworks.all()
@@ -37,7 +35,7 @@ def send_order_email(order, template_name, subject, shipment=None):
         message=text_content,
         to_email=(
             settings.TESTING_EMAIL_RECIPIENT
-            if USE_TESTING_EMAIL
+            if settings.DEBUG
             else order.customer_email
         ),
         html=html_content,
