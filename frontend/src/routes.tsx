@@ -1,5 +1,5 @@
 import { RouteObject } from 'react-router-dom';
-import { About, ArtDetail, ArtList, CheckoutReturn, Gallery } from '~/pages';
+import { About, ArtDetail, ArtList, CheckoutReturn, Gallery, Error } from '~/pages';
 import { Layout } from './layout';
 
 export const routes: RouteObject[] = [
@@ -26,6 +26,10 @@ export const routes: RouteObject[] = [
       {
         path: '/checkout',
         element: <CheckoutReturn />,
+      },
+      {
+        path: '*',
+        element: <Error />,
       },
     ],
   },

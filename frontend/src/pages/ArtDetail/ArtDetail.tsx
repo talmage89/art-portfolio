@@ -4,6 +4,7 @@ import { ChevronLeft } from 'lucide-react';
 import { useParams } from 'react-router';
 import { Spinner } from '~/components';
 import { useCartStore } from '~/data';
+import { Error } from '~/pages';
 import { Artwork, ArtworkModel } from '~/api';
 import './ArtDetail.scss';
 
@@ -11,6 +12,7 @@ export const ArtDetail = () => {
   const [artwork, setArtwork] = React.useState<Artwork | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = React.useState<number>(0);
   const [loading, setLoading] = React.useState(false);
+  const [notFound, setNotFound] = React.useState(false);
 
   const { id } = useParams();
   const { cart, addToCart } = useCartStore();
@@ -23,7 +25,10 @@ export const ArtDetail = () => {
     const startTime = Date.now();
     ArtworkModel.get(id)
       .then((res) => setArtwork(res.data))
-      .catch(console.error)
+      .catch((err) => {
+        console.error(err);
+        setNotFound(true);
+      })
       .finally(() => {
         const elapsed = Date.now() - startTime;
         const remainingTime = Math.max(0, 300 - elapsed);
@@ -44,7 +49,7 @@ export const ArtDetail = () => {
     );
   }
 
-  if (!artwork) return null;
+  if (!artwork || notFound) return <Error />
 
   return (
     <div className="ArtDetail">

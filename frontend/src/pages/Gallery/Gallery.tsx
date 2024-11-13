@@ -34,12 +34,16 @@ export const Gallery = () => {
         <div className="flex justify-center align-center w-100 pt-8">
           <Spinner />
         </div>
-      ) : (
+      ) : artworks.length > 0 ? (
         <>
           <div className="Gallery__left">{artworks.filter((_, i) => i % 2 === 0).map(renderArtwork)}</div>
           <div className="Gallery__right">{artworks.filter((_, i) => i % 2 === 1).map(renderArtwork)}</div>
           <ArtViewer artwork={openArtwork} open={!!openArtwork} onClose={() => setOpenArtwork(null)} />
         </>
+      ) : (
+        <div className="Gallery__empty">
+          <p>No paintings found</p>
+        </div>
       )}
     </div>
   );

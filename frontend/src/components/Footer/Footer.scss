@@ -1,0 +1,7 @@
+@use 'src/scss/variables' as *;
+
+.Footer {
+  width: 100%;
+  background-color: $gray-dark;
+  padding: 2rem 0;
+}

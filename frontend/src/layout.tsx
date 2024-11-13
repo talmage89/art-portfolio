@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
-import { Cart, Navbar } from "~/components";
+import { Cart, Footer, Navbar } from "~/components";
 import { useCartStore } from "~/data";
 import { Artwork, ArtworkModel } from "./api";
 import "./index.scss";
@@ -55,6 +55,7 @@ export const Layout = () => {
       <div className="Layout__content">
         <Outlet />
       </div>
+      {/* <Footer /> */}
       <Cart items={cart} isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </div>
   );

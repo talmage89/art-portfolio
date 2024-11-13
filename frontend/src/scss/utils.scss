@@ -40,66 +40,66 @@
 
 @for $i from 1 through 12 {
   .gap-#{$i} {
-    gap: #{$i / 4}rem;
+    gap: calc($i * 0.25rem);
   }
 
   .m-#{$i} {
-    margin: #{$i / 4}rem;
+    margin: calc($i * 0.25rem);
   }
 
   .mx-#{$i} {
-    margin-left: #{$i / 4}rem;
-    margin-right: #{$i / 4}rem;
+    margin-left: calc($i * 0.25rem);
+    margin-right: calc($i * 0.25rem);
   }
 
   .my-#{$i} {
-    margin-top: #{$i / 4}rem;
-    margin-bottom: #{$i / 4}rem;
+    margin-top: calc($i * 0.25rem);
+    margin-bottom: calc($i * 0.25rem);
   }
 
   .mt-#{$i} {
-    margin-top: #{$i / 4}rem;
+    margin-top: calc($i * 0.25rem);
   }
 
   .mb-#{$i} {
-    margin-bottom: #{$i / 4}rem;
+    margin-bottom: calc($i * 0.25rem);
   }
 
   .ml-#{$i} {
-    margin-left: #{$i / 4}rem;
+    margin-left: calc($i * 0.25rem);
   }
 
   .mr-#{$i} {
-    margin-right: #{$i / 4}rem;
+    margin-right: calc($i * 0.25rem);
   }
 
   .p-#{$i} {
-    padding: #{$i / 4}rem;
+    padding: calc($i * 0.25rem);
   }
 
   .px-#{$i} {
-    padding-left: #{$i / 4}rem;
-    padding-right: #{$i / 4}rem;
+    padding-left: calc($i * 0.25rem);
+    padding-right: calc($i * 0.25rem);
   }
 
   .py-#{$i} {
-    padding-top: #{$i / 4}rem;
-    padding-bottom: #{$i / 4}rem;
+    padding-top: calc($i * 0.25rem);
+    padding-bottom: calc($i * 0.25rem);
   }
 
   .pt-#{$i} {
-    padding-top: #{$i / 4}rem;
+    padding-top: calc($i * 0.25rem);
   }
 
   .pb-#{$i} {
-    padding-bottom: #{$i / 4}rem;
+    padding-bottom: calc($i * 0.25rem);
   }
 
   .pl-#{$i} {
-    padding-left: #{$i / 4}rem;
+    padding-left: calc($i * 0.25rem);
   }
 
   .pr-#{$i} {
-    padding-right: #{$i / 4}rem;
+    padding-right: calc($i * 0.25rem);
   }
 }

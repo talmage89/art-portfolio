@@ -35,11 +35,15 @@ export const ArtList = () => {
         <div className="flex justify-center align-center w-100 pt-8">
           <Spinner />
         </div>
-      ) : (
+      ) : artworks.length > 0 ? (
         <>
           <div className="ArtList__left">{artworks.filter((_, i) => i % 2 === 0).map(renderArtwork)}</div>
           <div className="ArtList__right">{artworks.filter((_, i) => i % 2 === 1).map(renderArtwork)}</div>
         </>
+      ) : (
+        <div className="ArtList__empty">
+          <p>No paintings found</p>
+        </div>
       )}
     </div>
   );

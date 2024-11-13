@@ -1,3 +1,5 @@
+@use '~/scss/variables' as *;
+
 .ArtList {
   max-width: 1020px;
   margin: 0 auto;
@@ -11,6 +13,20 @@
     display: flex;
     flex-direction: column;
     gap: 6rem;
+  }
+
+  &__empty {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 100px;
+
+    & p {
+      font-size: 16px;
+      color: $gray-light;
+      font-style: italic;
+    }
   }
 
   .ArtCard:hover {
