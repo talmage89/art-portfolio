@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# RUN DEPLOYMENT FROM REPO ROOT
+# Run deployment from repo root. Make sure you have pip-tools installed.
 #
 # ```bash
 # ./server/deploy.sh
@@ -10,18 +10,18 @@
 
 set -e
 
-echo "🚀 Starting deployment..."
+echo "\n\n🚀 Starting deployment..."
 
-echo "📥 Pulling latest changes..."
+echo "\n\n📥 Pulling latest changes...\n\n"
 git pull
 
-echo "🏗️ Building frontend..."
+echo "\n\n🏗️ Building frontend...\n\n"
 cd frontend
 npm install
 npm run build
 cd ..
 
-echo "🧱 Updating backend..."
+echo "\n\n🧱 Updating backend...\n\n"
 cd backend
 source venv/bin/activate
 pip-compile --upgrade requirements.in
@@ -31,8 +31,8 @@ python manage.py collectstatic --noinput
 deactivate
 cd ..
 
-echo "🔄 Restarting services..."
+echo "\n\n🔄 Restarting services...\n\n"
 sudo systemctl restart gunicorn
 sudo systemctl reload nginx
 
-echo "✅ Deployment complete!"
+echo "\n\n✅ Deployment complete!\n\n"
