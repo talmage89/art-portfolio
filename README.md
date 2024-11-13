@@ -6,6 +6,7 @@ Tech Stack:
 
 - Frontend: Vite, React, Typescript
 - Backend: Django, Django REST Framework, Docker, PostgreSQL
+- Vendor integrations: Stripe, Mailgun, Shippo
 
 ## Development
 
