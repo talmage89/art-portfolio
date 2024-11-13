@@ -18,3 +18,6 @@ requests
 # Payment and shipping
 stripe
 shippo
+
+# Server dependencies
+gunicorn
