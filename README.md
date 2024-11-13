@@ -25,8 +25,18 @@ cd backend
 docker compose up -d
 python -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install pip-tools
+pip-compile --upgrade requirements.in
+pip-sync requirements.txt
 python manage.py runserver
+```
+
+## Deployment
+
+To deploy the application, run the following on the server in the repo root:
+
+```bash
+./server/deploy.sh
 ```
 
 ## Environment Variables
