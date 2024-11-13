@@ -21,3 +21,4 @@ shippo
 
 # Server dependencies
 gunicorn
+argon2-cffi
