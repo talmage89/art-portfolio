@@ -36,7 +36,7 @@ python manage.py runserver
 To deploy the application, run the following on the server in the repo root. Make sure you have pip-tools installed.
 
 ```bash
-./server/deploy.sh
+bash ./server/deploy.sh
 ```
 
 ## Environment Variables
