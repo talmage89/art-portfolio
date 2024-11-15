@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Run deployment from repo root. Make sure you have pip-tools installed.
+# Run deployment from repo root. Make sure you have pip-tools installed in the backend venv.
 #
 # ```bash
 # bash ./server/deploy.sh
@@ -31,7 +31,7 @@ python manage.py collectstatic --noinput
 deactivate
 cd ..
 
-echo -e "\n\n🔄 Restarting services...\n\n"
+echo -e "\n\n🔄 Restarting services..."
 sudo systemctl restart gunicorn
 sudo systemctl reload nginx
 
