@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Artwork } from '~/api';
+import { formatInches } from '~/utils/api';
 import './ArtCard.scss';
 
 type ArtCardProps = {
@@ -27,13 +28,13 @@ export const ArtCard = ({ artwork, showInfo = true, onClick, dimensions }: ArtCa
         <img
           style={srcLoaded ? {} : { display: 'none' }}
           alt={artwork.title}
-          src={artwork.images[0].image}
+          src={artwork.images[0]?.image}
           onLoad={() => setSrcLoaded(true)}
         />
       </div>
       {showInfo && (
         <>
-          <h3 className="ArtCard__title">{`"${artwork.title}" ${artwork.size}`}</h3>
+          <h3 className="ArtCard__title">{`"${artwork.title}" ${formatInches(artwork.width_inches)}x${formatInches(artwork.height_inches)}`}</h3>
           <p className="ArtCard__price">
             {Number(artwork.price_cents / 100).toLocaleString('en-US', {
               style: 'currency',

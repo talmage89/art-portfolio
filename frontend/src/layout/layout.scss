@@ -7,7 +7,7 @@
   flex-direction: column;
   position: relative;
 
-  &:has(.Error),
+  &:has(.NotFound),
   &:has(.CheckoutReturn) {
     & .Navbar {
       animation: boxShadow 0.5s forwards;

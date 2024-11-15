@@ -1,11 +1,16 @@
 import { RouteObject } from 'react-router-dom';
-import { About, ArtDetail, ArtList, CheckoutReturn, Gallery, Error } from '~/pages';
+import { ErrorBoundary } from 'react-error-boundary';
+import { About, ArtDetail, ArtList, CheckoutReturn, Gallery, Error, NotFound } from '~/pages';
 import { Layout } from '~/layout';
 
 export const routes: RouteObject[] = [
   {
     path: '/',
-    element: <Layout />,
+    element: (
+      <ErrorBoundary FallbackComponent={Error}>
+        <Layout />
+      </ErrorBoundary>
+    ),
     children: [
       {
         path: '/',
@@ -29,7 +34,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: '*',
-        element: <Error />,
+        element: <NotFound />,
       },
     ],
   },

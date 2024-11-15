@@ -48,9 +48,9 @@ type MenuModalProps = {
 };
 
 const MenuModal = ({ isOpen, onClose, onCartOpen }: MenuModalProps) => {
-  if (!isOpen) return null;
-
   const { cart } = useCartStore();
+  
+  if (!isOpen) return null;
 
   return (
     <>

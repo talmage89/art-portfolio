@@ -4,9 +4,10 @@ import { ChevronLeft } from 'lucide-react';
 import { useParams } from 'react-router';
 import { Spinner } from '~/components';
 import { useCartStore } from '~/data';
-import { Error } from '~/pages';
+import { NotFound } from '~/pages';
 import { Artwork, ArtworkModel } from '~/api';
 import './ArtDetail.scss';
+import { getMedium } from '~/utils/api';
 
 export const ArtDetail = () => {
   const [artwork, setArtwork] = React.useState<Artwork | null>(null);
@@ -49,7 +50,7 @@ export const ArtDetail = () => {
     );
   }
 
-  if (!artwork || notFound) return <Error />
+  if (!artwork || notFound) return <NotFound />;
 
   return (
     <div className="ArtDetail">
@@ -73,23 +74,28 @@ export const ArtDetail = () => {
             ))}
           </div>
           <div className="ArtDetail__images__main">
-            <img src={artwork.images[selectedImageIndex].image} alt={artwork.title} />
+            <img src={artwork.images[selectedImageIndex]?.image} alt={artwork.title} />
           </div>
         </div>
         <div className="ArtDetail__info">
-          <h1 className="ArtDetail__info__title">{`"${artwork.title}" ${artwork.size}`}</h1>
+          <h1 className="ArtDetail__info__title">{artwork.title}</h1>
           <p className="ArtDetail__info__price">
             {`${Number(artwork.price_cents / 100).toLocaleString('en-US', {
               style: 'currency',
               currency: 'USD',
             })} USD`}
           </p>
-          <p className="ArtDetail__info__note">Shipping costs will be calculated at checkout.</p>
-          <p className="ArtDetail__info__note">Unframed original {artwork.size} oil painting on canvas.</p>
-          <p className="ArtDetail__info__note">Stephanie Bergeson, 2024-32</p>
+          <p className="ArtDetail__info__note">Unframed original painting.</p>
+          <p className="ArtDetail__info__note">Medium: {getMedium(artwork.medium)}</p>
           <p className="ArtDetail__info__note">
-            * please contact us if you wish to receive a frame with this painting!
+            Size: {Number(artwork.width_inches)}" x {Number(artwork.height_inches)}"
           </p>
+          <p className="ArtDetail__info__note">
+            Stephanie Bergeson{artwork.painting_year ? `, ${artwork.painting_year}` : ''}
+          </p>
+          {/* <p className="ArtDetail__info__note">
+            * please contact us if you wish to receive a frame with this painting!
+          </p> */}
           <button
             className="ArtDetail__info__button"
             onClick={() => addToCart(artwork)}

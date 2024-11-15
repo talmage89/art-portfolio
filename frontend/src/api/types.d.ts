@@ -1,12 +1,18 @@
 export type Artwork = {
   id: string;
   title: string;
-  size: string;
-  price_cents: number;
-  images: Image[];
+  painting_number: number;
+  painting_year: number;
+  width_inches: number;
+  height_inches: number;
+  paper: boolean;
+  medium: string;
+  category: string;
   status: string;
+  price_cents: number;
   creation_date: string;
-  image_dimensions?: [number, number];  
+  images: Image[];
+  image_dimensions?: [number, number];
 };
 
 export type Image = {
