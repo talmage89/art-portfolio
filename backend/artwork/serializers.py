@@ -34,9 +34,14 @@ class ArtworkSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "title",
-            "size",
-            "price_cents",
+            "painting_number",
+            "painting_year",
+            "width_inches",
+            "height_inches",
+            "medium",
+            "category",
             "status",
+            "price_cents",
             "created_at",
             "image_dimensions",
             "images",
@@ -46,5 +51,5 @@ class ArtworkSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         if self.context.get("view").action == "list":
             images = data.pop("images")
-            data["images"] = [images[0]]
+            data["images"] = [images[0]] if images else []
         return data

@@ -10,10 +10,16 @@ class ImageInline(admin.TabularInline):
 
 class ArtworkAdmin(admin.ModelAdmin):
     inlines = [ImageInline]
-    list_display = ["__str__", "sort_order", "size", "price_cents", "status"]
-    list_filter = ["status", "created_at"]
+    list_display = [
+        "__str__",
+        "sort_order",
+        "width_inches",
+        "height_inches",
+        "price_cents",
+        "status",
+    ]
+    list_filter = ["status", "created_at", "medium", "category"]
     search_fields = ["title"]
-    fields = ["title", "sort_order", "size", "price_cents", "status", "shipment"]
 
 
 class ImageAdmin(admin.ModelAdmin):
