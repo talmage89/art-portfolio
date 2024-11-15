@@ -34,6 +34,7 @@
       }
       .header p {
         font-size: 12px;
+        color: #666;
       }
       @media (min-width: 480px) {
         .header {
@@ -58,6 +59,7 @@
       }
       .order-details > p {
         font-size: 16px;
+        color: #666;
       }
       .artwork-item {
         margin: 15px 0;
@@ -121,8 +123,11 @@
         font-size: 18px;
         font-weight: bold;
       }
+      .note-from-seller > p {
+        font-size: 16px;
+        color: #666;
+      }
       .shipping-details {
-        margin-top: 20px;
         clear: both;
       }
       .shipping-details > h3 {
@@ -138,6 +143,15 @@
       }
       .shipping-name {
         font-weight: bold;
+      }
+      .shipping-data {
+        margin-top: 16px;
+      }
+      .shipping-data p {
+        font-size: 14px;
+        color: #666;
+        text-align: center;
+        margin: 8px 0 0;
       }
       p.footer-note {
         margin-top: 40px;
@@ -166,18 +180,19 @@
     {% endif %}
   </head>
   <body>
-    {% load artwork_tags %}
+    {% load orders_tags %}
     <div class="container">
       <div class="header">
-        <h1>Order Received!</h1>
+        <h1>Order Delivered!</h1>
         <p>Order ID: {{ order.id }}</p>
       </div>
       <div class="order-details">
-        <h2>Thank you!</h2>
-        <p>Your order has been received. We will notify you when it ships.</p>
+        <h2>Great news!</h2>
+        <p>Your order has arrived. Here's what we delivered:</p>
 
-        <h3>Order Summary</h3>
-        {% for artwork in artworks %}
+        <h3>Package Summary</h3>
+        {% if shipment and shipment.artworks.exists %}
+        {% for artwork in shipment.artworks.all %}
         <div class="artwork-item">
           {% if artwork.images.exists %}
           <img
@@ -190,22 +205,17 @@
             <h3>{{ artwork.title }}</h3>
             <p>Size: {{ artwork.size }}</p>
           </div>
-          <div class="artwork-price">
-            ${{ artwork.price_cents|cents_to_dollars }}
           </div>
+          {% endfor %}
+        {% endif %}
+        {% if order.artworks.count != shipment.artworks.count %}
+        <h3>Note:</h3>
+        <div class="note-from-seller">
+          <p>Your order is being shipped in at least {{ order.shipments.count }} separate packages. Packages may be delivered separately.</p>
         </div>
-        {% endfor %}
-
-        <div class="total">
-          <p>Subtotal: ${{ order.subtotal_cents|cents_to_dollars }}</p>
-          <p>Shipping: ${{ order.shipping_cents|cents_to_dollars }}</p>
-          <p class="total-price">
-            Total: ${{ order.total_cents|cents_to_dollars }}
-          </p>
-        </div>
-
+        {% endif %}
+        <h3>Delivery Address</h3>
         <div class="shipping-details">
-          <h3>Shipping Details</h3>
           <div class="shipping-info">
             <p class="shipping-name">{{ order.shipping_name }}</p>
             <p>{{ order.shipping_address_line1 }}</p>
@@ -218,7 +228,9 @@
             <p>{{ order.shipping_country }}</p>
           </div>
         </div>
-        <p class="footer-note">Please do not reply to this email. This mailbox is not monitored.</p>
+        <p class="footer-note">
+          Please do not reply to this email. This mailbox is not monitored.
+        </p>
       </div>
     </div>
   </body>

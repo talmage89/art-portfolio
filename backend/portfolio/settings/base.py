@@ -13,6 +13,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 INSTALLED_APPS = [
     "artwork.apps.ArtworkConfig",
+    "orders.apps.OrdersConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -40,7 +41,7 @@ ROOT_URLCONF = "portfolio.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "artwork/templates"],
+        "DIRS": [BASE_DIR / "orders/templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -50,7 +51,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
             ],
             "libraries": {
-                "artwork_tags": "artwork.templatetags.artwork_tags",
+                "orders_tags": "orders.templatetags.orders_tags",
             },
         },
     },
@@ -126,11 +127,19 @@ MEDIA_URL = "/media/"
 # Custom settings
 #
 
-REST_FRAMEWORK = {"DEFAULT_PERMISSION_CLASSES": ["artwork.permissions.IsAdminUser"]}
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": ["artwork.permissions.IsAdminUser"],
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    ],
+}
+
+FRONTEND_URL = env("DEVELOPMENT_FRONTEND_URL")
 
 STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
 STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET")
 MAILGUN_API_KEY = env("MAILGUN_API_KEY")
-MAILGUN_DOMAIN = env("MAILGUN_SANDBOX_DOMAIN")
+MAILGUN_DOMAIN = env("MAILGUN_DOMAIN")
 TESTING_EMAIL_RECIPIENT = env("TESTING_EMAIL_RECIPIENT")
 SHIPPO_API_KEY = env("SHIPPO_API_KEY")

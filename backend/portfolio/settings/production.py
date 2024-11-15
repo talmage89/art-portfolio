@@ -1,7 +1,8 @@
 from .base import *
 
-DOMAIN = env("PRODUCTION_DOMAIN")
 
+DOMAIN = env("PRODUCTION_DOMAIN")
+FRONTEND_URL = DOMAIN
 
 DEBUG = False
 

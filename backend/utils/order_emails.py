@@ -1,9 +1,9 @@
 from django.conf import settings
 from django.template.loader import render_to_string
-from .mailgun import send_mailgun_email
-
-from artwork.templatetags.artwork_tags import cents_to_dollars, get_item
 from django.template.defaultfilters import register
+
+from orders.templatetags.orders_tags import cents_to_dollars, get_item
+from .mailgun import send_mailgun_email
 
 register.filter("cents_to_dollars", cents_to_dollars)
 register.filter("get_item", get_item)

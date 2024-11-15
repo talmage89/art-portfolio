@@ -7,7 +7,7 @@ def send_mailgun_email(subject, message, to_email, html=None):
 
     auth = ("api", settings.MAILGUN_API_KEY)
     data = {
-        "from": f"Stephanie Bee <test@sandbox70cac40225b44f19a719889a0b810429.mailgun.org>",
+        "from": f"Stephanie Bee <test@{settings.MAILGUN_DOMAIN}>",
         "to": to_email,
         "subject": subject,
         "text": message,

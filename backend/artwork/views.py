@@ -6,18 +6,18 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.parsers import MultiPartParser, FormParser
+
 from utils.order_emails import (
     send_order_confirmation,
     send_shipment_started,
     send_shipment_completed,
 )
-from .models import Artwork, Image, Order, Payment
+from orders.models import Order
+from .models import Artwork, Image, Order
 from .permissions import IsAdminOrReadOnly
 from .serializers import (
     ArtworkSerializer,
     ImageSerializer,
-    OrderSerializer,
-    PaymentSerializer,
 )
 
 
@@ -30,7 +30,7 @@ class ArtworkFilter(django_filters.FilterSet):
 
 
 class ArtworkViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = [IsAdminOrReadOnly]    
+    permission_classes = [IsAdminOrReadOnly]
     queryset = Artwork.objects.all()
     serializer_class = ArtworkSerializer
     parser_classes = (MultiPartParser, FormParser)
@@ -48,16 +48,6 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     parser_classes = (MultiPartParser, FormParser)
-
-
-class OrderViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
-
-    def perform_create(self, serializer):
-        order = serializer.save()
-        send_order_confirmation(order)
-        return order
 
 
 class TestEmailSendView(APIView):

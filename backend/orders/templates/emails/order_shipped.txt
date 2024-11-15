@@ -1,4 +1,4 @@
-{% load artwork_tags %}
+{% load orders_tags %}
 Order Shipped!
 Order ID: {{ order.id }}
 
