@@ -1,6 +1,6 @@
 import { RouteObject } from 'react-router-dom';
 import { About, ArtDetail, ArtList, CheckoutReturn, Gallery, Error } from '~/pages';
-import { Layout } from './layout';
+import { Layout } from '~/layout';
 
 export const routes: RouteObject[] = [
   {
@@ -24,7 +24,7 @@ export const routes: RouteObject[] = [
         element: <ArtDetail />,
       },
       {
-        path: '/checkout',
+        path: '/checkout/success',
         element: <CheckoutReturn />,
       },
       {

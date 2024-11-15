@@ -11,7 +11,7 @@ import './ArtDetail.scss';
 export const ArtDetail = () => {
   const [artwork, setArtwork] = React.useState<Artwork | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = React.useState<number>(0);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
   const [notFound, setNotFound] = React.useState(false);
 
   const { id } = useParams();

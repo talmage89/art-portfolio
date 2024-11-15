@@ -1,10 +1,11 @@
 import * as React from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
+import { Artwork, ArtworkModel } from "~/api";
 import { Cart, Navbar } from "~/components";
 import { useCartStore } from "~/data";
-import { Artwork, ArtworkModel } from "./api";
-import "./index.scss";
+import "~/index.scss";
+import "./layout.scss";
 
 export const Layout = () => {
   const [cartOpen, setCartOpen] = React.useState(false);
