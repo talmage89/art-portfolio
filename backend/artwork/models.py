@@ -54,6 +54,7 @@ class Artwork(models.Model):
 
     sort_order = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+    sold_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ["sort_order"]

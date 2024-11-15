@@ -8,7 +8,8 @@ from utils.order_emails import send_shipment_started, send_shipment_completed
 
 class Order(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    session_id = models.CharField(max_length=200)
+    stripe_session_id = models.CharField(max_length=200, unique=True, null=True)
+    stripe_payment_intent_id = models.CharField(max_length=200, unique=True, null=True)
     customer_email = models.EmailField()
     shipping_rate_id = models.CharField(max_length=200)
     shipping_name = models.CharField(max_length=200)
