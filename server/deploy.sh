@@ -15,7 +15,7 @@ echo -e "\n\n🚀 Starting deployment..."
 echo -e "\n\n📥 Pulling latest changes...\n\n"
 git pull
 
-echo -e "\n\n🏗️ Building frontend...\n\n"
+echo -e "\n\n🏗️ Building frontend...\n"
 cd frontend
 npm install
 npm run build
