@@ -141,7 +141,14 @@ class OrderAdmin(admin.ModelAdmin):
         ),
         (
             "Technical Details",
-            {"fields": ("session_id", "shipping_rate_id"), "classes": ("collapse",)},
+            {
+                "fields": (
+                    "stripe_session_id",
+                    "stripe_payment_intent_id",
+                    "shipping_rate_id",
+                ),
+                "classes": ("collapse",),
+            },
         ),
     )
 
@@ -192,6 +199,7 @@ class ShipmentAdmin(admin.ModelAdmin):
         "tracking_number",
         "tracking_url",
     ]
+
 
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Shipment, ShipmentAdmin)
