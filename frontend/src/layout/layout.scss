@@ -8,7 +8,8 @@
   position: relative;
 
   &:has(.NotFound),
-  &:has(.CheckoutReturn) {
+  &:has(.CheckoutReturn),
+  &:has(.HealthCheck) {
     & .Navbar {
       animation: boxShadow 0.5s forwards;
 

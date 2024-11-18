@@ -1,7 +1,7 @@
 import { RouteObject } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
-import { About, ArtDetail, ArtList, CheckoutReturn, Gallery, Error, NotFound } from '~/pages';
 import { Layout } from '~/layout';
+import { About, ArtDetail, ArtList, CheckoutReturn, Gallery, Error, NotFound, HealthCheck } from '~/pages';
 
 export const routes: RouteObject[] = [
   {
@@ -31,6 +31,10 @@ export const routes: RouteObject[] = [
       {
         path: '/checkout/success',
         element: <CheckoutReturn />,
+      },
+      {
+        path: '/health',
+        element: <HealthCheck />,
       },
       {
         path: '*',
