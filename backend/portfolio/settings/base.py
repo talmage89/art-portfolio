@@ -4,7 +4,6 @@ import environ
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-BASE_URL = "http://localhost:8000"
 
 env = environ.Env()
 env.read_env(os.path.join(BASE_DIR, ".env"))
