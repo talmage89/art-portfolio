@@ -1,25 +1,19 @@
 #!/bin/bash
 
 #
-# Run deployment from repo root. Make sure you have pip-tools installed in the backend venv.
+# Run backend deployment from repo root. Make sure you have pip-tools installed in the backend venv.
 #
 # ```bash
-# bash ./server/deploy.sh
+# bash ./server/deploy_backend.sh
 # ```
 #
 
 set -e
 
-echo -e "\n\n🚀 Starting deployment..."
+echo -e "\n\n🚀 Starting backend deployment..."
 
 echo -e "\n\n📥 Pulling latest changes...\n\n"
 git pull
-
-echo -e "\n\n🏗️ Building frontend...\n"
-cd frontend
-npm install
-npm run build
-cd ..
 
 echo -e "\n\n🧱 Updating backend...\n\n"
 cd backend
@@ -35,4 +29,4 @@ echo -e "\n\n🔄 Restarting services..."
 sudo systemctl restart gunicorn.service
 sudo systemctl reload nginx
 
-echo -e "\n\n✅ Deployment complete!\n\n"
+echo -e "\n\n✅ Backend deployment complete!\n\n" 
