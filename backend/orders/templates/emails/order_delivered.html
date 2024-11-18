@@ -203,7 +203,7 @@
           {% endif %}
           <div class="artwork-info">
             <h3>{{ artwork.title }}</h3>
-            <p>Size: {{ artwork.size }}</p>
+            <p>Size: {{ artwork.width_inches|floatformat:0 }}" x {{ artwork.height_inches|floatformat:0 }}"</p>
           </div>
           </div>
           {% endfor %}

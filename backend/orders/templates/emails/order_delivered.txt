@@ -2,20 +2,23 @@ Order Delivered!
 Order ID: {{ order.id }}
 
 Great news!
-Your order has been delivered. Here's what we shipped:
+Your order has arrived. Here's what we delivered:
 
-CONTENTS
-{% for artwork in artworks %}
+Package Summary:
+{% if shipment and shipment.artworks.exists %}
+{% for artwork in shipment.artworks.all %}
 {{ artwork.title }}
-Size: {{ artwork.size }}
-{% endfor %}
+Size: {{ artwork.width_inches|floatformat:0 }}" x {{ artwork.height_inches|floatformat:0 }}"
 
-{% if note_from_seller %}
-NOTE FROM THE SELLER:
-{{ note_from_seller }}
+{% endfor %}
 {% endif %}
 
-DELIVERY ADDRESS
+{% if order.artworks.count != shipment.artworks.count %}
+Note:
+Your order is being shipped in at least {{ order.shipments.count }} separate packages. Packages may be delivered separately.
+{% endif %}
+
+Delivery Address:
 {{ order.shipping_name }}
 {{ order.shipping_address_line1 }}
 {% if order.shipping_address_line2 %}{{ order.shipping_address_line2 }}{% endif %}
