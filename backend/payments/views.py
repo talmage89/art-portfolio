@@ -5,12 +5,12 @@ import warnings
 
 from django.conf import settings
 from django.db import transaction
+from django.db.models import Q
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import status
-from rest_framework import views
+from rest_framework import status, views
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
@@ -31,6 +31,7 @@ class StripeAnonThrottle(AnonRateThrottle):
 @method_decorator(csrf_exempt, name="dispatch")
 class CreateCheckoutSessionView(views.APIView):
     permission_classes = [AllowAny]
+    authentication_classes = []
     throttle_classes = [StripeAnonThrottle]
 
     def post(self, request, *args, **kwargs):
@@ -103,7 +104,7 @@ def create_order(session):
     if existing_order:
         return existing_order
 
-    with transaction.atomic:
+    with transaction.atomic():
         product_ids = [
             uuid.UUID(id)
             for id in session["metadata"].get("product_ids", "").split(",")
@@ -112,7 +113,7 @@ def create_order(session):
 
         artworks = Artwork.objects.select_for_update().filter(id__in=product_ids)
 
-        unavailable = [a for a in artworks if not a.is_available]
+        unavailable = [a for a in artworks if a.status != "available"]
         if unavailable:
             raise ValueError(f"Artworks {unavailable} no longer available")
 
@@ -162,7 +163,6 @@ def create_order(session):
 
 
 def fulfill_order(event_type, session):
-    session_id = session["id"]
     payment_intent_id = session.get("payment_intent")
 
     try:
@@ -183,7 +183,7 @@ def fulfill_order(event_type, session):
             }
 
             if session.get("payment_status") == "paid":
-                order = Order.objects.get(session_id=session_id)
+                order = Order.objects.get(stripe_payment_intent_id=payment_intent_id)
                 payment_data["order"] = order
                 payment_data["status"] = "succeeded"
                 Payment.objects.create(**payment_data)
@@ -193,7 +193,7 @@ def fulfill_order(event_type, session):
             "checkout.session.async_payment_failed",
         ]:
             with transaction.atomic():
-                order = Order.objects.get(session_id=session_id)
+                order = Order.objects.get(stripe_payment_intent_id=payment_intent_id)
                 order.status = "processing" if "succeeded" in event_type else "failed"
                 order.save()
 
@@ -205,7 +205,7 @@ def fulfill_order(event_type, session):
 
         elif event_type == "checkout.session.expired":
             try:
-                order = Order.objects.get(session_id=session_id)
+                order = Order.objects.get(stripe_payment_intent_id=payment_intent_id)
                 order.status = "failed"
                 order.save()
             except Order.DoesNotExist:
@@ -226,10 +226,8 @@ def stripe_webhook(request):
     try:
         event = stripe.Webhook.construct_event(payload, sig_header, webhook_secret)
     except ValueError as e:
-        print("ValueError", e)
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
     except stripe.error.SignatureVerificationError as e:
-        print("SignatureVerificationError", e)
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
 
     event_type = event["type"]
