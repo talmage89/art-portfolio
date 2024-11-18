@@ -14,6 +14,12 @@ class ShipmentInlineForm(forms.ModelForm):
         help_text="Select which artworks will be included in this shipment",
     )
 
+    expected_delivery_days = forms.CharField(
+        label="Expected delivery window",
+        help_text="e.g. 3-5 business days. Not required.",
+        required=False,
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
