@@ -6,7 +6,7 @@ import warnings
 from django.conf import settings
 from django.db import transaction
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -235,3 +235,7 @@ def stripe_webhook(request):
     fulfill_order(event_type, session)
 
     return HttpResponse(status=200)
+
+
+def health_check(request):
+    return JsonResponse({"status": "ok"})
