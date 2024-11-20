@@ -2,7 +2,7 @@ from .base import *
 
 
 DOMAIN = env("PRODUCTION_DOMAIN")
-FRONTEND_URL = DOMAIN
+FRONTEND_URL = f"https://{DOMAIN}"
 BASE_URL = f"https://{DOMAIN}"
 
 DEBUG = False
