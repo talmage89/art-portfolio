@@ -52,14 +52,7 @@ VITE_API_HOST=http://localhost:8000/
 
 ### Stripe
 
-For Stripe, you will need to create an account and get an API key. Put the publishable key in the frontend `.env` file:
-
-```
-# frontend .env
-VITE_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
-```
-
-And put the secret key in an `.env` file in the root of the backend directory:
+For Stripe, you will need to create an account and get an API key. Pput the secret key in an `.env` file in the root of the backend directory:
 
 ```
 # backend .env
