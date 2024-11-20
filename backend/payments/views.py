@@ -82,6 +82,11 @@ class CreateCheckoutSessionView(views.APIView):
                     success_url=f"{settings.FRONTEND_URL}/checkout/success",
                     cancel_url=f"{settings.FRONTEND_URL}/",
                     expires_at=int(time.time() + 60 * 30),
+                    payment_method_types=[
+                        "card",
+                        "apple_pay",
+                        "google_pay",
+                    ],
                     metadata={
                         "product_ids": product_ids_str,
                         "created_at": str(timezone.now()),
