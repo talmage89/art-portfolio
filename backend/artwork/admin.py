@@ -12,6 +12,7 @@ class ArtworkAdmin(admin.ModelAdmin):
     inlines = [ImageInline]
     list_display = [
         "__str__",
+        "painting_number",
         "sort_order",
         "width_inches",
         "height_inches",

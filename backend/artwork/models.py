@@ -10,6 +10,7 @@ class Artwork(models.Model):
         ("sold", "Sold"),
         ("available", "Available"),
         ("coming_soon", "Coming Soon"),
+        ("not_for_sale", "Not for Sale"),
         ("unavailable", "Unavailable"),
     ]
 

@@ -5,6 +5,7 @@ from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import viewsets
+from rest_framework.exceptions import NotFound
 from rest_framework.parsers import MultiPartParser, FormParser
 
 from utils.order_emails import (
@@ -22,11 +23,20 @@ from .serializers import (
 
 
 class ArtworkFilter(django_filters.FilterSet):
-    status = django_filters.ChoiceFilter(choices=Artwork.STATUS_CHOICES)
+    status = django_filters.MultipleChoiceFilter(
+        choices=Artwork.STATUS_CHOICES, lookup_expr="in", field_name="status", conjoined=False
+    )
 
     class Meta:
         model = Artwork
         fields = ["status"]
+
+    def filter_queryset(self, queryset):
+        # Get status values
+        status_values = self.form.cleaned_data.get('status', [])
+        if status_values:
+            queryset = queryset.filter(status__in=status_values)
+        return queryset
 
 
 class ArtworkViewSet(viewsets.ReadOnlyModelViewSet):
@@ -41,6 +51,24 @@ class ArtworkViewSet(viewsets.ReadOnlyModelViewSet):
         artwork = serializer.save()
         if "image" in self.request.FILES:
             Image.objects.create(artwork=artwork, image=self.request.FILES["image"])
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        if 'status' not in self.request.query_params:
+            queryset = queryset.filter(
+                status__in=["available", "coming_soon", "sold", "not_for_sale"]
+            )
+        return queryset
+
+    def get_object(self):
+        try:
+            obj = super().get_object()
+            if obj.status not in ["available", "coming_soon", "sold", "not_for_sale"]:
+                raise NotFound()
+            return obj
+        except NotFound:
+            raise NotFound("Artwork not found")
 
 
 class ImageViewSet(viewsets.ReadOnlyModelViewSet):
