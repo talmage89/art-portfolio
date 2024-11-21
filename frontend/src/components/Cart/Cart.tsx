@@ -55,7 +55,7 @@ export const Cart = (props: CartProps) => {
             props.items.map((item) => (
               <div key={item.id} className="Cart__item">
                 <img
-                  src={item.images[0].image}
+                  src={item.images[0]?.image}
                   alt={item.title}
                   className="Cart__item__image"
                   onClick={() => {

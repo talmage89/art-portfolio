@@ -34,7 +34,10 @@ export const ArtCard = ({ artwork, showInfo = true, onClick, dimensions }: ArtCa
       </div>
       {showInfo && (
         <>
-          <h3 className="ArtCard__title">{`"${artwork.title}" ${formatInches(artwork.width_inches)}x${formatInches(artwork.height_inches)}`}</h3>
+          <h3 className="ArtCard__title">{`"${artwork.title}" ${formatInches(artwork.width_inches)}x${formatInches(
+            artwork.height_inches
+          )}`}</h3>
+          {artwork.status === 'coming_soon' && <p className="ArtCard__comingSoon">Coming Soon!</p>}
           <p className="ArtCard__price">
             {Number(artwork.price_cents / 100).toLocaleString('en-US', {
               style: 'currency',

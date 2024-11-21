@@ -98,10 +98,21 @@ export const ArtDetail = () => {
           </p> */}
           <button
             className="ArtDetail__info__button"
-            onClick={() => addToCart(artwork)}
-            disabled={cart.some((item) => item.id === artwork.id)}
+            onClick={() => {
+              if (artwork.status !== 'available') return;
+              addToCart(artwork);
+            }}
+            disabled={cart.some((item) => item.id === artwork.id) || artwork.status !== 'available'}
           >
-            {cart.some((item) => item.id === artwork.id) ? 'Added to Cart!' : 'Add to Cart'}
+            {artwork.status === 'coming_soon'
+              ? 'Coming Soon!'
+              : artwork.status === 'not_for_sale'
+              ? 'Not for Sale'
+              : artwork.status === 'sold'
+              ? 'Already Sold'
+              : cart.some((item) => item.id === artwork.id)
+              ? 'Added to Cart!'
+              : 'Add to Cart'}
           </button>
         </div>
       </div>

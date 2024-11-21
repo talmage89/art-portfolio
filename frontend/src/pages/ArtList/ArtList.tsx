@@ -12,7 +12,7 @@ export const ArtList = () => {
 
   React.useEffect(() => {
     setLoading(true);
-    ArtworkModel.list({ status: 'available' })
+    ArtworkModel.list({ status: ["available", "coming_soon"] })
       .then((res) => setArtworks(res.data))
       .catch(console.error)
       .finally(() => setLoading(false));
