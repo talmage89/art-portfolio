@@ -1,16 +1,16 @@
+import * as Sentry from '@sentry/react';
 import { RouteObject } from 'react-router-dom';
-import { ErrorBoundary } from 'react-error-boundary';
 import { Layout } from '~/layout';
 import { About, ArtDetail, ArtList, CheckoutReturn, Gallery, Error, NotFound, HealthCheck } from '~/pages';
+
+const LayoutWithBoundary = Sentry.withErrorBoundary(Layout, {
+  fallback: <Error />,
+});
 
 export const routes: RouteObject[] = [
   {
     path: '/',
-    element: (
-      <ErrorBoundary FallbackComponent={Error}>
-        <Layout />
-      </ErrorBoundary>
-    ),
+    element: <LayoutWithBoundary />,
     children: [
       {
         path: '/',
