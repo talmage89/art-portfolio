@@ -1,0 +1,11 @@
+@use 'src/scss/animations.scss' as *;
+@use 'src/scss/mixins.scss' as *;
+@use 'src/scss/variables.scss' as *;
+
+.Checkout {
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}

@@ -1,0 +1,14 @@
+@mixin montserrat {
+  font-family: 'Montserrat', sans-serif;
+}
+
+@mixin roboto-mono {
+  font-family: 'Roboto Mono', monospace;
+}
+
+@mixin container {
+  max-width: 1020px;
+  margin: 0 auto;
+  padding: 0 24px;
+  width: calc(100% - 48px);
+}

@@ -1,0 +1,76 @@
+@use 'src/scss/animations.scss' as *;
+@use 'src/scss/mixins.scss' as *;
+@use 'src/scss/variables.scss' as *;
+
+.Cart {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 0;
+  }
+
+  &__empty {
+    @include container;
+    padding-top: 24px;
+    font-size: 16px;
+    color: $gray-light;
+  }
+
+  &__item {
+    @include container;
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid #eee;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &__image {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    &__details {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
+
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+      }
+
+      &__info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      &__price {
+        margin: 0;
+        font-size: 14px;
+        color: #666;
+      }
+
+      &__remove {
+        color: red;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 14px;
+      }
+    }
+  }
+}

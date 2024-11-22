@@ -1,16 +1,14 @@
 import * as React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useCartStore } from '~/data';
 import './Navbar.scss';
 
-type NavbarProps = {
-  onCartOpen: () => void;
-};
-
-export const Navbar = ({ onCartOpen }: NavbarProps) => {
+export const Navbar = () => {
   const [menuOpen, setMenuOpen] = React.useState(false);
 
+  const { cart } = useCartStore();
+  
   React.useEffect(() => {
     const mediaQuery = window.matchMedia('(min-width: 720px)');
     const handleResize = (e: MediaQueryListEvent) => {
@@ -29,14 +27,15 @@ export const Navbar = ({ onCartOpen }: NavbarProps) => {
         <h1 className="Navbar__title">Stephanie Bee Studio</h1>
         <div className="Navbar__links">
           <NavLink to="/">Available Artwork</NavLink>
-          <NavLink to="/about">About</NavLink>
           <NavLink to="/gallery">Gallery</NavLink>
+          <NavLink to="/about">About</NavLink>
+          <NavLink to="/cart">Cart{cart.length > 0 && ` (${cart.length})`}</NavLink>
         </div>
         <button className="Navbar__menu" onClick={() => setMenuOpen((p) => !p)}>
           {menuOpen ? <X /> : <Menu />}
         </button>
       </div>
-      <MenuModal isOpen={menuOpen} onClose={() => setMenuOpen(false)} onCartOpen={onCartOpen} />
+      <MenuModal isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
     </div>
   );
 };
@@ -44,12 +43,12 @@ export const Navbar = ({ onCartOpen }: NavbarProps) => {
 type MenuModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onCartOpen: () => void;
 };
 
-const MenuModal = ({ isOpen, onClose, onCartOpen }: MenuModalProps) => {
+const MenuModal = ({ isOpen, onClose }: MenuModalProps) => {
   const { cart } = useCartStore();
-  
+  const navigate = useNavigate();
+
   if (!isOpen) return null;
 
   return (
@@ -60,17 +59,17 @@ const MenuModal = ({ isOpen, onClose, onCartOpen }: MenuModalProps) => {
           <NavLink to="/" onClick={onClose}>
             Available Artwork
           </NavLink>
-          <NavLink to="/about" onClick={onClose}>
-            About
-          </NavLink>
           <NavLink to="/gallery" onClick={onClose}>
             Gallery
+          </NavLink>
+          <NavLink to="/about" onClick={onClose}>
+            About
           </NavLink>
           <button
             className="Navbar__modal__content__cart"
             onClick={() => {
               onClose();
-              onCartOpen();
+              navigate('/cart');
             }}
           >
             My Cart - {cart.length} item{cart.length === 1 ? '' : 's'}

@@ -1,18 +1,17 @@
 import * as React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArtCard, Spinner } from '~/components';
+import { Spinner } from '~/components';
 import { Artwork, ArtworkModel } from '~/api';
-import './ArtList.scss';
+import { ArtCard, ArtViewer } from '../../components';
+import './Gallery.scss';
 
-export const ArtList = () => {
+export const Gallery = () => {
+  const [openArtwork, setOpenArtwork] = React.useState<Artwork | null>(null);
   const [artworks, setArtworks] = React.useState<Artwork[]>([]);
   const [loading, setLoading] = React.useState(true);
 
-  const navigate = useNavigate();
-
   React.useEffect(() => {
     setLoading(true);
-    ArtworkModel.list({ status: ["available", "coming_soon"] })
+    ArtworkModel.list()
       .then((res) => setArtworks(res.data))
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -23,25 +22,27 @@ export const ArtList = () => {
       <ArtCard
         key={artwork.id}
         artwork={artwork}
-        onClick={() => navigate(`/art/${artwork.id}`)}
+        showInfo={false}
+        onClick={() => setOpenArtwork(artwork)}
         dimensions={artwork.image_dimensions}
       />
     );
   };
 
   return (
-    <div className="ArtList">
+    <div className="Gallery">
       {loading ? (
         <div className="flex justify-center align-center w-100 pt-8">
           <Spinner />
         </div>
       ) : artworks.length > 0 ? (
         <>
-          <div className="ArtList__left">{artworks.filter((_, i) => i % 2 === 0).map(renderArtwork)}</div>
-          <div className="ArtList__right">{artworks.filter((_, i) => i % 2 === 1).map(renderArtwork)}</div>
+          <div className="Gallery__left">{artworks.filter((_, i) => i % 2 === 0).map(renderArtwork)}</div>
+          <div className="Gallery__right">{artworks.filter((_, i) => i % 2 === 1).map(renderArtwork)}</div>
+          <ArtViewer artwork={openArtwork} open={!!openArtwork} onClose={() => setOpenArtwork(null)} />
         </>
       ) : (
-        <div className="ArtList__empty">
+        <div className="Gallery__empty">
           <p>No paintings found</p>
         </div>
       )}

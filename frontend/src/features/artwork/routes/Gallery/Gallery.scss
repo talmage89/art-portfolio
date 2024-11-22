@@ -1,18 +1,18 @@
 @use '~/scss/variables' as *;
 
-.ArtList {
-  max-width: 1020px;
+.Gallery {
+  max-width: 1600px;
   margin: 0 auto;
   display: flex;
-  gap: 8rem;
-  padding: 0 2rem 100px;
+  gap: 6rem;
+  padding: 2rem 3rem 50px;
 
   &__left,
   &__right {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 6rem;
+    gap: 4rem;
   }
 
   &__empty {
@@ -28,19 +28,23 @@
       font-style: italic;
     }
   }
+}
 
-  .ArtCard:hover {
-    .ArtCard__image {
-      &::after {
-        background-color: rgba(white, 0.15);
-      }
+@media (max-width: 1200px) {
+  .Gallery {
+    gap: 3rem;
+
+    &__left,
+    &__right {
+      gap: 3rem;
     }
   }
 }
 
 @media (max-width: 1020px) {
-  .ArtList {
-    gap: 4rem;
+  .Gallery {
+    gap: 2rem;
+    padding: 1rem 1rem 2rem;
 
     &__left,
     &__right {
@@ -50,9 +54,18 @@
 }
 
 @media (max-width: 720px) {
-  .ArtList {
+  .Gallery {
     flex-direction: column;
-    padding: 0 1rem 2rem;
-    gap: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .Gallery {
+    gap: 1rem;
+
+    &__left,
+    &__right {
+      gap: 1rem;
+    }
   }
 }

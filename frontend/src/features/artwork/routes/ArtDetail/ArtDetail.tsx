@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { useParams } from 'react-router';
 import { Spinner } from '~/components';
-import { useCartStore } from '~/data';
-import { NotFound } from '~/pages';
 import { Artwork, ArtworkModel } from '~/api';
-import './ArtDetail.scss';
+import { useCartStore } from '~/data';
+import { NotFound } from '~/features/core';
 import { getMedium } from '~/utils/api';
+import './ArtDetail.scss';
 
 export const ArtDetail = () => {
   const [artwork, setArtwork] = React.useState<Artwork | null>(null);

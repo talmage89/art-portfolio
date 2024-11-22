@@ -3,7 +3,7 @@
 .ArtDetail {
   max-width: 1140px;
   margin: 0 auto;
-  padding: 0 2rem 2rem;
+  padding: 2rem;
   box-sizing: border-box;
   width: 100%;
 
@@ -145,7 +145,7 @@
 
 @media (max-width: 1020px) {
   .ArtDetail {
-    padding: 0 1rem 2rem;
+    padding: 1rem 1rem 2rem;
 
     &__main {
       flex-direction: column;
