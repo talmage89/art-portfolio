@@ -1,7 +1,12 @@
-import stripe
+import json
+import math
 import time
 import uuid
 import warnings
+
+import stripe
+import shippo
+from shippo.models import components
 
 from django.conf import settings
 from django.db import transaction
@@ -23,9 +28,74 @@ from utils.order_emails import send_order_confirmation
 stripe.api_key = settings.STRIPE_SECRET_KEY
 webhook_secret = settings.STRIPE_WEBHOOK_SECRET
 
+shippo_sdk = shippo.Shippo(api_key_header=settings.SHIPPO_API_KEY)
+
 
 class StripeAnonThrottle(AnonRateThrottle):
     rate = "10/min"
+
+
+def get_shipping_rates(shipping_details):
+    try:
+        customer_address = shippo_sdk.addresses.create(
+            components.AddressCreateRequest(
+                name=shipping_details["name"],
+                street1=shipping_details["street1"],
+                street2=shipping_details.get("street2"),
+                city=shipping_details["city"],
+                state=shipping_details["state"],
+                zip=shipping_details["postalCode"],
+                email=shipping_details["email"],
+                country=shipping_details.get("country", "US"),
+            )
+        )
+
+        sender_address = shippo_sdk.addresses.create(
+            components.AddressCreateRequest(
+                name=settings.SHIPPO_SENDER_NAME,
+                street1=settings.SHIPPO_SENDER_STREET1,
+                city=settings.SHIPPO_SENDER_CITY,
+                state=settings.SHIPPO_SENDER_STATE,
+                zip=settings.SHIPPO_SENDER_ZIP,
+                country=settings.SHIPPO_SENDER_COUNTRY,
+            )
+        )
+
+        parcel = shippo_sdk.parcels.create(
+            components.ParcelCreateRequest(
+                length=10,
+                width=10,
+                height=10,
+                distance_unit=components.DistanceUnitEnum.IN,
+                weight="2",
+                mass_unit=components.WeightUnitEnum.LB,
+            )
+        )
+
+        shipment = shippo_sdk.shipments.create(
+            components.ShipmentCreateRequest(
+                address_from=sender_address,
+                address_to=customer_address,
+                parcels=[parcel],
+                async_=False,
+            )
+        )
+
+        rates = shipment.rates
+        filtered_rates = [
+            {
+                "service_name": f"{rate.provider} - {rate.servicelevel.name}",
+                "amount_cents": int(math.ceil(float(rate.amount)) * 100) - 1,
+                "delivery_days": rate.estimated_days,
+            }
+            for rate in rates
+            if len(rate.attributes) > 0
+        ]
+
+        return sorted(filtered_rates, key=lambda x: x["amount_cents"])
+
+    except Exception as e:
+        raise ValueError(f"SHIPPING ERROR: {str(e)}")
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -36,19 +106,42 @@ class CreateCheckoutSessionView(views.APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            product_ids = request.data["product_ids"]
+            data = request.data
+            #
+            # validate request data
+            product_ids = data.get("product_ids")
+            shipping_details = data.get("shipping_details")
+
+            required_shipping_fields = [
+                "name",
+                "email",
+                "street1",
+                "city",
+                "state",
+                "postalCode",
+            ]
+            missing_fields = [
+                field
+                for field in required_shipping_fields
+                if field not in shipping_details
+            ]
+            if missing_fields:
+                return Response(
+                    f"Missing required shipping fields: {', '.join(missing_fields)}",
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             with transaction.atomic():
+                #
+                # check if products are still available
                 products = Artwork.objects.select_for_update().filter(
                     id__in=product_ids
                 )
-
                 if len(products) != len(product_ids):
                     return Response(
                         "One or more products not found",
                         status=status.HTTP_400_BAD_REQUEST,
                     )
-
                 unavailable = [p for p in products if p.status != "available"]
                 if unavailable:
                     return Response(
@@ -57,7 +150,6 @@ class CreateCheckoutSessionView(views.APIView):
                     )
 
                 line_items = []
-
                 for product in products:
                     line_items.append(
                         {
@@ -69,25 +161,55 @@ class CreateCheckoutSessionView(views.APIView):
                             "quantity": 1,
                         }
                     )
-
                 product_ids_str = ",".join(product_ids)
 
+                #
+                # get shipping rates
+                filtered_rates = get_shipping_rates(shipping_details)
+                shipping_options = [
+                    {
+                        "shipping_rate_data": {
+                            "type": "fixed_amount",
+                            "fixed_amount": {
+                                "amount": rate["amount_cents"],
+                                "currency": "usd",
+                            },
+                            "display_name": rate["service_name"],
+                            "delivery_estimate": {
+                                "minimum": {
+                                    "unit": "business_day",
+                                    "value": rate["delivery_days"],
+                                },
+                                "maximum": {
+                                    "unit": "business_day",
+                                    "value": rate["delivery_days"],
+                                },
+                            },
+                        }
+                    }
+                    for rate in filtered_rates
+                ]
+                shipping_details_str = json.dumps(shipping_details)
+
+                #
+                # create checkout session
                 session = stripe.checkout.Session.create(
+                    customer_email=shipping_details["email"],
                     line_items=line_items,
-                    shipping_address_collection={"allowed_countries": ["US"]},
-                    shipping_options=[
-                        {"shipping_rate": "shr_1QL6h5KQhljGwEslWFE34xvr"},
-                    ],
+                    shipping_address_collection=None,
+                    shipping_options=shipping_options[:5],
                     mode="payment",
-                    success_url=f"{settings.FRONTEND_URL}/checkout/success",
-                    cancel_url=f"{settings.FRONTEND_URL}/",
+                    success_url=f"{settings.FRONTEND_URL}/cart/?success=true",
+                    cancel_url=f"{settings.FRONTEND_URL}/cart/",
                     expires_at=int(time.time() + 60 * 30),
                     payment_method_types=["card"],
                     metadata={
                         "product_ids": product_ids_str,
                         "created_at": str(timezone.now()),
+                        "shipping_details": shipping_details_str,
                     },
                 )
+
         except Exception as e:
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
