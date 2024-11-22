@@ -191,14 +191,20 @@ def email_admin(session):
     message = f"""
 You have received an order.
 
+
+
 Order Details:
 --------------
-Order ID: {session_id}
 Order Total: ${order_total_dollars:,.2f}
+Order ID: {session_id}
+
+
 
 Artworks:
 ---------
 {chr(10).join(f'- {product}' for product in products)}
+
+
 
 ⚠️ IMPORTANT ACTION REQUIRED:
 ---------------------------
@@ -206,6 +212,18 @@ Please verify in the admin panel that:
 1. The order details match the Stripe payment
 2. All artworks are marked as "sold"
 3. The order has valid shipping information
+
+Now, please fulfill the order.
+Go to the Order page in the admin panel to do so.
+Create a shipping label using the shipping information saved on the order.
+Then, create a 'Shipment' at the bottom of the order page.
+
+Please remember to keep track of the shipment status, and mark shipment as 'delivered' when the shipment is delivered.
+
+Emails are sent to the customer on these three events:
+- order created (same trigger that sends this email)
+- shipment created
+- shipment delivered
 """
 
     try:
