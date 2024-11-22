@@ -18,6 +18,7 @@ from rest_framework.throttling import AnonRateThrottle
 from artwork.models import Artwork
 from orders.models import Order, Payment
 from orders.serializers import OrderSerializer
+from utils.mailgun import send_mailgun_email
 from utils.order_emails import send_order_confirmation
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -74,9 +75,19 @@ class CreateCheckoutSessionView(views.APIView):
 
                 session = stripe.checkout.Session.create(
                     line_items=line_items,
-                    shipping_address_collection={"allowed_countries": ["US"]},
+                    shipping_address_collection={"allowed_countries": ["US", "CA"]},
                     shipping_options=[
-                        {"shipping_rate": "shr_1QL6h5KQhljGwEslWFE34xvr"},
+                        {
+                            "shipping_rate_data": {
+                                "type": "fixed_amount",
+                                "fixed_amount": {"amount": 1000, "currency": "usd"},
+                                "display_name": "Standard Shipping",
+                                "delivery_estimate": {
+                                    "minimum": {"unit": "business_day", "value": 7},
+                                    "maximum": {"unit": "business_day", "value": 7},
+                                },
+                            }
+                        },
                     ],
                     mode="payment",
                     success_url=f"{settings.FRONTEND_URL}/checkout/success",
@@ -163,11 +174,56 @@ def create_order(session):
     return order
 
 
+def email_admin(session):
+    order_total_dollars = session.get("amount_total", 0) / 100
+    session_id = session.get("id", "N/A")
+
+    # Get product IDs and titles
+    product_ids = [
+        uuid.UUID(id)
+        for id in session["metadata"].get("product_ids", "").split(",")
+        if id
+    ]
+    products = Artwork.objects.filter(id__in=product_ids).values_list(
+        "title", flat=True
+    )
+
+    message = f"""
+You have received an order.
+
+Order Details:
+--------------
+Order ID: {session_id}
+Order Total: ${order_total_dollars:,.2f}
+
+Artworks:
+---------
+{chr(10).join(f'- {product}' for product in products)}
+
+⚠️ IMPORTANT ACTION REQUIRED:
+---------------------------
+Please verify in the admin panel that:
+1. The order details match the Stripe payment
+2. All artworks are marked as "sold"
+3. The order has valid shipping information
+"""
+
+    try:
+        send_mailgun_email(
+            "Order Received",
+            message,
+            settings.ADMIN_EMAIL,
+        )
+    except Exception as e:
+        warnings.warn(f"Failed to email admin: {str(e)}", RuntimeWarning)
+
+
 def fulfill_order(event_type, session):
     payment_intent_id = session.get("payment_intent")
 
     try:
         if event_type == "checkout.session.completed":
+            email_admin(session)
             order = create_order(session)
 
             payment_data = {
@@ -213,9 +269,7 @@ def fulfill_order(event_type, session):
                 pass
 
     except Exception as e:
-        warnings.warn(
-            f"Error processing webhook {event_type}: {str(e)}", RuntimeWarning
-        )
+        return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
 
 
 @csrf_exempt

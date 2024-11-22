@@ -12,7 +12,7 @@ def send_mailgun_email(subject, message, to_email, html=None):
         "subject": subject,
         "text": message,
     }
-    
+
     if html:
         data["html"] = html
 
