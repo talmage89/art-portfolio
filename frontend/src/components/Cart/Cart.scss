@@ -10,8 +10,8 @@
   width: 500px;
   max-width: 100%;
   padding: 24px 0;
-  // 100vh - padding top and bottom
-  height: calc(100vh - (var(--padding) * 2));
+  height: calc(90vh - (var(--padding) * 2));
+  height: calc(100dvh - (var(--padding) * 2));
   background: white;
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
