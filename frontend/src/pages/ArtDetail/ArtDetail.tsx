@@ -2,12 +2,12 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { useParams } from 'react-router';
-import { Spinner } from '~/components';
-import { useCartStore } from '~/data';
-import { NotFound } from '~/pages';
 import { Artwork, ArtworkModel } from '~/api';
-import './ArtDetail.scss';
+import { Spinner } from '~/components';
+import { useCartStore, useTrackClick } from '~/data';
+import { NotFound } from '~/pages';
 import { getMedium } from '~/utils/api';
+import './ArtDetail.scss';
 
 export const ArtDetail = () => {
   const [artwork, setArtwork] = React.useState<Artwork | null>(null);
@@ -17,6 +17,7 @@ export const ArtDetail = () => {
 
   const { id } = useParams();
   const { cart, addToCart } = useCartStore();
+  const trackClick = useTrackClick('add-to-cart');
 
   const spinnerTimeoutRef = React.useRef<number | null>(null);
 
@@ -100,6 +101,7 @@ export const ArtDetail = () => {
             className="ArtDetail__info__button"
             onClick={() => {
               if (artwork.status !== 'available') return;
+              trackClick(artwork.title);
               addToCart(artwork);
             }}
             disabled={cart.some((item) => item.id === artwork.id) || artwork.status !== 'available'}

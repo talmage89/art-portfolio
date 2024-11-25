@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import { useCartStore } from '~/data';
+import { useCartStore, useTrackClick } from '~/data';
 import './Navbar.scss';
 
 type NavbarProps = {
@@ -10,6 +10,8 @@ type NavbarProps = {
 
 export const Navbar = ({ onCartOpen }: NavbarProps) => {
   const [menuOpen, setMenuOpen] = React.useState(false);
+
+  const trackNavClick = useTrackClick('nav-link');
 
   React.useEffect(() => {
     const mediaQuery = window.matchMedia('(min-width: 720px)');
@@ -28,9 +30,15 @@ export const Navbar = ({ onCartOpen }: NavbarProps) => {
       <div className="Navbar">
         <h1 className="Navbar__title">Stephanie Bee Studio</h1>
         <div className="Navbar__links">
-          <NavLink to="/">Available Artwork</NavLink>
-          <NavLink to="/about">About</NavLink>
-          <NavLink to="/gallery">Gallery</NavLink>
+          <NavLink to="/" onClick={() => trackNavClick('Available Artwork')}>
+            Available Artwork
+          </NavLink>
+          <NavLink to="/about" onClick={() => trackNavClick('About')}>
+            About
+          </NavLink>
+          <NavLink to="/gallery" onClick={() => trackNavClick('Gallery')}>
+            Gallery
+          </NavLink>
         </div>
         <button className="Navbar__menu" onClick={() => setMenuOpen((p) => !p)}>
           {menuOpen ? <X /> : <Menu />}
@@ -49,7 +57,15 @@ type MenuModalProps = {
 
 const MenuModal = ({ isOpen, onClose, onCartOpen }: MenuModalProps) => {
   const { cart } = useCartStore();
-  
+
+  const trackNavClick = useTrackClick('nav-link');
+  const trackCartClick = useTrackClick('cart');
+
+  function handleLinkClick(name: string) {
+    onClose();
+    trackNavClick(name);
+  }
+
   if (!isOpen) return null;
 
   return (
@@ -57,13 +73,13 @@ const MenuModal = ({ isOpen, onClose, onCartOpen }: MenuModalProps) => {
       <div className="Navbar__modal-overlay" onClick={onClose} />
       <div className="Navbar__modal">
         <div className="Navbar__modal__content">
-          <NavLink to="/" onClick={onClose}>
+          <NavLink to="/" onClick={() => handleLinkClick('Available Artwork')}>
             Available Artwork
           </NavLink>
-          <NavLink to="/about" onClick={onClose}>
+          <NavLink to="/about" onClick={() => handleLinkClick('About')}>
             About
           </NavLink>
-          <NavLink to="/gallery" onClick={onClose}>
+          <NavLink to="/gallery" onClick={() => handleLinkClick('Gallery')}>
             Gallery
           </NavLink>
           <button
@@ -71,6 +87,7 @@ const MenuModal = ({ isOpen, onClose, onCartOpen }: MenuModalProps) => {
             onClick={() => {
               onClose();
               onCartOpen();
+              trackCartClick('Mobile Cart Button');
             }}
           >
             My Cart - {cart.length} item{cart.length === 1 ? '' : 's'}
