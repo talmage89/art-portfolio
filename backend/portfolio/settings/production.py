@@ -2,23 +2,32 @@ from .base import *
 
 DEBUG = False
 
-DOMAIN = env("PRODUCTION_DOMAIN", default="")
-FRONTEND_URL = f"https://{DOMAIN}"
+DOMAIN = env("PROD_DOMAIN", default="")
+BACKEND_DOMAIN = env("PROD_BACKEND_DOMAIN", default="")
+
 BASE_URL = f"https://{DOMAIN}"
 
-ALLOWED_HOSTS = [DOMAIN, f"www.{DOMAIN}"]
+ALLOWED_HOSTS = [BACKEND_DOMAIN]
 
-SESSION_COOKIE_DOMAIN = DOMAIN
+# Assumes backend is subdomain
+SESSION_COOKIE_DOMAIN = f".{DOMAIN}"
 SESSION_COOKIE_AGE = 1209600
 SESSION_COOKIE_HTTPONLY = True
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = "Lax"
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [f"https://{DOMAIN}", f"https://www.{DOMAIN}"]
-CSRF_COOKIE_DOMAIN = DOMAIN
-CSRF_TRUSTED_ORIGINS = [f"https://{DOMAIN}", f"https://www.{DOMAIN}"]
+CORS_ALLOWED_ORIGINS = [f"https://{DOMAIN}"]
+
+# Assumes backend is subdomain
+CSRF_COOKIE_DOMAIN = f".{DOMAIN}"
+CSRF_TRUSTED_ORIGINS = [
+    f"https://{BACKEND_DOMAIN}",
+    f"https://{DOMAIN}",
+]
 CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = "Lax"
 
 SECURE_SSL_REDIRECT = True
 SECURE_HSTS_SECONDS = 0
@@ -52,6 +61,7 @@ CSP_STYLE_SRC = (
 CSP_IMG_SRC = (
     "'self'",
     "data:",
+    "https://storage.googleapis.com",
 )
 CSP_FONT_SRC = ("'self'",)
 CSP_FRAME_SRC = ("'none'",)

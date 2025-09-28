@@ -90,8 +90,8 @@ class CreateCheckoutSessionView(views.APIView):
                         },
                     ],
                     mode="payment",
-                    success_url=f"{settings.FRONTEND_URL}/checkout/success",
-                    cancel_url=f"{settings.FRONTEND_URL}/",
+                    success_url=f"{settings.BASE_URL}/checkout/success",
+                    cancel_url=f"{settings.BASE_URL}/",
                     expires_at=int(time.time() + 60 * 30),
                     payment_method_types=["card"],
                     metadata={

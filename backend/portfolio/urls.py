@@ -19,7 +19,7 @@ router.register(r"artworks", ArtworkViewSet)
 router.register(r"images", ImageViewSet)
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path("", admin.site.urls),
     path("api/", include(router.urls)),
     path("api/auth/", include("rest_framework.urls"), name="api-auth"),
     path(
