@@ -6,6 +6,14 @@ from .models import Artwork, Image
 class ImageInline(admin.TabularInline):
     model = Image
     extra = 1
+    fields = [
+        "image",
+        "is_main_image",
+        "image_width",
+        "image_height",
+        "uploaded_at",
+    ]
+    readonly_fields = ["image_width", "image_height", "uploaded_at"]
 
 
 class ArtworkAdmin(admin.ModelAdmin):
@@ -24,7 +32,23 @@ class ArtworkAdmin(admin.ModelAdmin):
 
 
 class ImageAdmin(admin.ModelAdmin):
-    list_display = ["__str__", "artwork", "is_main_image", "uploaded_at"]
+    list_display = [
+        "__str__",
+        "artwork",
+        "is_main_image",
+        "image_width",
+        "image_height",
+        "uploaded_at",
+    ]
+    readonly_fields = ["image_width", "image_height", "uploaded_at"]
+    fields = [
+        "artwork",
+        "image",
+        "is_main_image",
+        "image_width",
+        "image_height",
+        "uploaded_at",
+    ]
 
 
 admin.site.register(Artwork, ArtworkAdmin)

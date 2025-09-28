@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import environ
+import dj_database_url
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -22,6 +23,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "django_filters",
+    "storages",
 ]
 
 MIDDLEWARE = [
@@ -62,21 +64,11 @@ WSGI_APPLICATION = "portfolio.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-POSTGRES_USER = env("POSTGRES_USER")
-POSTGRES_PASSWORD = env("POSTGRES_PASSWORD")
-POSTGRES_DB = env("POSTGRES_DB")
-POSTGRES_HOST = env("POSTGRES_HOST")
-POSTGRES_PORT = env("POSTGRES_PORT")
-
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": POSTGRES_DB,
-        "USER": POSTGRES_USER,
-        "PASSWORD": POSTGRES_PASSWORD,
-        "HOST": POSTGRES_HOST,
-        "PORT": POSTGRES_PORT,
-    }
+    "default": dj_database_url.config(
+        default=env("DATABASE_URL"),
+        conn_max_age=600,
+    )
 }
 
 # Password validation
@@ -112,14 +104,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-MEDIA_URL = "/media/"
 
 #
 #
@@ -142,4 +132,20 @@ STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET")
 MAILGUN_API_KEY = env("MAILGUN_API_KEY")
 MAILGUN_DOMAIN = env("MAILGUN_DOMAIN")
 
-SHIPPO_API_KEY = env("SHIPPO_API_KEY")
+#
+# Google Cloud Storage settings
+#
+
+GS_BUCKET_NAME = env("GS_BUCKET_NAME", default="")
+GS_PROJECT_ID = env("GS_PROJECT_ID", default="")
+
+MEDIA_URL = f"https://storage.googleapis.com/{env('GS_BUCKET_NAME')}/"
+
+STORAGES = {
+    "default": {
+        "BACKEND": "artwork.storage.GoogleCloudMediaFileStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}

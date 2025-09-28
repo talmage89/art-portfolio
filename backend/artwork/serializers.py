@@ -7,9 +7,8 @@ class ImageSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
 
     def get_image(self, obj):
-        request = self.context.get("request")
-        if request and obj.image:
-            return request.build_absolute_uri(obj.image.url)
+        if obj.image:
+            return obj.image.url
         return None
 
     class Meta:
@@ -23,8 +22,7 @@ class ArtworkSerializer(serializers.ModelSerializer):
 
     def get_images(self, obj):
         images = obj.images.all()
-        sorted_images = sorted(images, key=lambda x: not x.is_main_image)
-        return ImageSerializer(sorted_images, many=True, context=self.context).data
+        return ImageSerializer(images, many=True, context=self.context).data
 
     def get_image_dimensions(self, obj):
         return obj.get_image_dimensions()

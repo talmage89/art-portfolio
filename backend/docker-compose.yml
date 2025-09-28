@@ -1,13 +1,15 @@
 services:
-  postgres:
-    image: postgres:16-alpine
+  backend:
+    build:
+      dockerfile: Dockerfile
     ports:
-      - "127.0.0.1:5432:5432"
-    volumes:
-      - ./data/postgres:/var/lib/postgresql/data
-    restart: always
+      - "8080:8080"
     env_file:
       - .env
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+      - /Users/talmage/.config/gcloud:/root/.config/gcloud:ro
 
 volumes:
-  postgres-data:
+  static_volume:

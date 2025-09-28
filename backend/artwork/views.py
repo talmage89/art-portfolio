@@ -2,6 +2,7 @@ import django_filters
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
+from django.db.models import Prefetch
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import viewsets
@@ -24,7 +25,10 @@ from .serializers import (
 
 class ArtworkFilter(django_filters.FilterSet):
     status = django_filters.MultipleChoiceFilter(
-        choices=Artwork.STATUS_CHOICES, lookup_expr="in", field_name="status", conjoined=False
+        choices=Artwork.STATUS_CHOICES,
+        lookup_expr="in",
+        field_name="status",
+        conjoined=False,
     )
 
     class Meta:
@@ -33,7 +37,7 @@ class ArtworkFilter(django_filters.FilterSet):
 
     def filter_queryset(self, queryset):
         # Get status values
-        status_values = self.form.cleaned_data.get('status', [])
+        status_values = self.form.cleaned_data.get("status", [])
         if status_values:
             queryset = queryset.filter(status__in=status_values)
         return queryset
@@ -55,10 +59,15 @@ class ArtworkViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
 
-        if 'status' not in self.request.query_params:
+        if "status" not in self.request.query_params:
             queryset = queryset.filter(
                 status__in=["available", "coming_soon", "sold", "not_for_sale"]
             )
+
+        queryset = queryset.prefetch_related(
+            Prefetch("images", queryset=Image.objects.order_by("-is_main_image"))
+        ).order_by("sort_order")
+
         return queryset
 
     def get_object(self):

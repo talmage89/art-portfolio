@@ -1,17 +1,12 @@
 from .base import *
 
+DEBUG = False
 
 DOMAIN = env("PRODUCTION_DOMAIN")
 FRONTEND_URL = f"https://{DOMAIN}"
 BASE_URL = f"https://{DOMAIN}"
 
-DEBUG = False
-
 ALLOWED_HOSTS = [DOMAIN, f"www.{DOMAIN}"]
-STATIC_URL = "/static/"
-STATIC_ROOT = env("STATIC_ROOT")
-MEDIA_URL = "/media/"
-MEDIA_ROOT = env("MEDIA_ROOT")
 
 SESSION_COOKIE_DOMAIN = DOMAIN
 SESSION_COOKIE_AGE = 1209600
