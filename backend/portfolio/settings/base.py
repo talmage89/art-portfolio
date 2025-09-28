@@ -9,7 +9,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 env = environ.Env()
 env.read_env(os.path.join(BASE_DIR, ".env"))
 
-SECRET_KEY = env("DJANGO_SECRET_KEY")
+if env("COLLECTSTATIC", default=False):
+    SECRET_KEY = env("DJANGO_SECRET_KEY", default="dummykey")
+else:
+    SECRET_KEY = env("DJANGO_SECRET_KEY")
+
 
 INSTALLED_APPS = [
     "artwork.apps.ArtworkConfig",
@@ -66,7 +70,7 @@ WSGI_APPLICATION = "portfolio.wsgi.application"
 
 DATABASES = {
     "default": dj_database_url.config(
-        default=env("DATABASE_URL"),
+        default=env("DATABASE_URL", default=""),
         conn_max_age=600,
     )
 }
@@ -124,13 +128,13 @@ REST_FRAMEWORK = {
     ],
 }
 
-ADMIN_EMAIL = env("ADMIN_EMAIL")
+ADMIN_EMAIL = env("ADMIN_EMAIL", default="")
 
-STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
-STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET")
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY", default="")
+STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET", default="")
 
-MAILGUN_API_KEY = env("MAILGUN_API_KEY")
-MAILGUN_DOMAIN = env("MAILGUN_DOMAIN")
+MAILGUN_API_KEY = env("MAILGUN_API_KEY", default="")
+MAILGUN_DOMAIN = env("MAILGUN_DOMAIN", default="")
 
 #
 # Google Cloud Storage settings
@@ -139,7 +143,7 @@ MAILGUN_DOMAIN = env("MAILGUN_DOMAIN")
 GS_BUCKET_NAME = env("GS_BUCKET_NAME", default="")
 GS_PROJECT_ID = env("GS_PROJECT_ID", default="")
 
-MEDIA_URL = f"https://storage.googleapis.com/{env('GS_BUCKET_NAME')}/"
+MEDIA_URL = f"https://storage.googleapis.com/{env('GS_BUCKET_NAME', default='')}/"
 
 STORAGES = {
     "default": {
