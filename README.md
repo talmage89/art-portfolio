@@ -25,9 +25,7 @@ cd backend
 docker compose up -d
 python -m venv venv
 source venv/bin/activate
-pip install pip-tools
-pip-compile --upgrade requirements.in
-pip-sync requirements.txt
+pip install -r requirements.txt
 python manage.py runserver
 ```
 
