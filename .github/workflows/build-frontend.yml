@@ -39,9 +39,9 @@ jobs:
           path: frontend/dist/
 
   deploy:
-    runs-on: ubuntu-latest
-
     needs: build
+
+    runs-on: ubuntu-latest
 
     permissions:
       pages: write
