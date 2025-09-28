@@ -29,22 +29,5 @@ urlpatterns = [
     ),
     path("api/stripe-webhook/", stripe_webhook, name="stripe-webhook"),
     path("api/health/", health_check, name="health-check"),
+    static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns.extend(
-        [
-            path(
-                "api/preview-email/",
-                PreviewEmailTemplateView.as_view(),
-                name="preview-email",
-            ),
-            path(
-                "api/test-send-email/",
-                TestEmailSendView.as_view(),
-                name="test-send-email",
-            ),
-        ]
-    )
