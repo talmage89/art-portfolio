@@ -1,6 +1,8 @@
 import os
-from pathlib import Path
+import sys
 import environ
+from pathlib import Path
+
 import dj_database_url
 
 
@@ -9,10 +11,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 env = environ.Env()
 env.read_env(os.path.join(BASE_DIR, ".env"))
 
-if env("COLLECTSTATIC", default=False):
-    SECRET_KEY = env("DJANGO_SECRET_KEY", default="dummykey")
-else:
-    SECRET_KEY = env("DJANGO_SECRET_KEY")
+IS_COLLECTSTATIC = "collectstatic" in sys.argv
+
+SECRET_KEY = env("DJANGO_SECRET_KEY", default=None)
+
+if not SECRET_KEY:
+    if IS_COLLECTSTATIC:
+        SECRET_KEY = "dummykey"
+    else:
+        raise RuntimeError("DJANGO_SECRET_KEY must be set at runtime!")
 
 
 INSTALLED_APPS = [
