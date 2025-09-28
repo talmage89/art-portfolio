@@ -4,13 +4,9 @@ on:
   push:
     branches:
       - stage
-    paths:
-      - "frontend/**"
   pull_request:
     branches:
       - stage
-    paths:
-      - "frontend/**"
 
 jobs:
   build:
