@@ -2,8 +2,8 @@ from .base import *
 
 DEBUG = False
 
-DOMAIN = env("PROD_DOMAIN", default="")
-BACKEND_DOMAIN = env("PROD_BACKEND_DOMAIN", default="")
+DOMAIN = env("DOMAIN", default="")
+BACKEND_DOMAIN = env("BACKEND_DOMAIN", default="")
 
 BASE_URL = f"https://{DOMAIN}"
 
