@@ -14,6 +14,6 @@ COPY . .
 
 RUN python manage.py collectstatic --noinput
 
-EXPOSE 8080
+EXPOSE $PORT
 
-CMD ["gunicorn", "portfolio.wsgi:application", "--bind=0.0.0.0:8080", "--workers=2"]
+CMD gunicorn portfolio.wsgi:application --bind=0.0.0.0:$PORT --workers=2

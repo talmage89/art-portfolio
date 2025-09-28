@@ -8,8 +8,4 @@ services:
       - .env
     volumes:
       - .:/app
-      - static_volume:/app/staticfiles
       - /Users/talmage/.config/gcloud:/root/.config/gcloud:ro
-
-volumes:
-  static_volume:
