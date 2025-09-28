@@ -2,9 +2,13 @@ name: Build Frontend
 
 on:
   push:
+    branches:
+      - stage
     paths:
       - "frontend/**"
   pull_request:
+    branches:
+      - stage
     paths:
       - "frontend/**"
 
