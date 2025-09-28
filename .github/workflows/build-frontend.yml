@@ -48,7 +48,7 @@ jobs:
       id-token: write
 
     environment:
-      name: frontend-build
+      name: github-pages
       url: ${{ steps.deploy-frontend-pages.outputs.page_url }}
 
     steps:
@@ -56,5 +56,4 @@ jobs:
         uses: actions/deploy-pages@v4
         id: deploy-frontend-pages
         with:
-          artifact-name: frontend-build
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          artifact_name: frontend-build
