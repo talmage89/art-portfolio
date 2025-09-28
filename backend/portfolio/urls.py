@@ -3,6 +3,7 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.http import JsonResponse
+from django.urls import reverse
 from rest_framework.routers import DefaultRouter
 
 from artwork.views import (
@@ -19,7 +20,6 @@ router.register(r"artworks", ArtworkViewSet)
 router.register(r"images", ImageViewSet)
 
 urlpatterns = [
-    path("", admin.site.urls),
     path("api/", include(router.urls)),
     path("api/auth/", include("rest_framework.urls"), name="api-auth"),
     path(
@@ -29,6 +29,7 @@ urlpatterns = [
     ),
     path("api/stripe-webhook/", stripe_webhook, name="stripe-webhook"),
     path("api/health/", health_check, name="health-check"),
+    path("", admin.site.urls),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
