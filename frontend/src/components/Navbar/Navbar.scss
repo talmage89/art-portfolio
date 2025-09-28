@@ -72,7 +72,7 @@
   display: flex;
   flex-direction: column;
   animation: slideFromTop 0.2s ease-out;
-  
+
   &__content {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     background-color: white;
@@ -117,7 +117,7 @@
 @media (max-width: 720px) {
   .Navbar {
     padding: 2rem 0;
-    
+
     &__container {
       position: fixed;
       top: 0;

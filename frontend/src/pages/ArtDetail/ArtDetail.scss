@@ -204,7 +204,8 @@
 @media (min-width: 481px) and (max-width: 484px) {
   .ArtDetail {
     &__info {
-      &__title, &__note {
+      &__title,
+      &__note {
         max-width: calc(100vw - 4rem);
       }
     }

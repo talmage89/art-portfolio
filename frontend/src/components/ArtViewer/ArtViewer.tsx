@@ -1,6 +1,6 @@
-import { X } from "lucide-react";
-import { Artwork } from "~/api";
-import "./ArtViewer.scss";
+import { X } from 'lucide-react';
+import { Artwork } from '~/api';
+import './ArtViewer.scss';
 
 type ArtViewerProps = {
   artwork: Artwork | null;

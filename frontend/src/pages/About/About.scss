@@ -1,4 +1,4 @@
-@use "src/scss/variables" as *;
+@use 'src/scss/variables' as *;
 
 .About {
   max-width: 1140px;
@@ -29,7 +29,7 @@
           background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
           animation: shimmer 2s infinite;
         }
-  
+
         @keyframes shimmer {
           100% {
             left: 150%;
@@ -109,8 +109,6 @@
 @media (max-width: 720px) {
   .About {
     padding: 0 1rem 2rem;
-
-
 
     &__hero {
       flex-direction: column;

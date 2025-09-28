@@ -9,10 +9,7 @@ type SpinnerProps = {
 export const Spinner = ({ width = 64, height = 64, text }: SpinnerProps) => {
   return (
     <div className="Spinner">
-      <div 
-        className="Spinner__circle" 
-        style={{ width: `${width}px`, height: `${height}px` }}
-      />
+      <div className="Spinner__circle" style={{ width: `${width}px`, height: `${height}px` }} />
       {text && <p>{text}</p>}
     </div>
   );

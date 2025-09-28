@@ -10,14 +10,9 @@ export const About = () => {
     <div className="About">
       <div className="About__hero">
         <div className="About__hero__image">
-          {!imageLoaded && (
-            <div 
-              className="About__hero__image__placeholder" 
-              style={{ aspectRatio: '569/319' }}
-            />
-          )}
-          <img 
-            src={about_img} 
+          {!imageLoaded && <div className="About__hero__image__placeholder" style={{ aspectRatio: '569/319' }} />}
+          <img
+            src={about_img}
             alt="Stephanie Bergeson"
             style={{ display: imageLoaded ? 'block' : 'none' }}
             onLoad={() => setImageLoaded(true)}

@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import "./HealthCheck.scss";
+import { Link } from 'react-router-dom';
+import './HealthCheck.scss';
 
 export const HealthCheck = () => {
   return (
