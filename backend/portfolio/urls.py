@@ -29,5 +29,6 @@ urlpatterns = [
     ),
     path("api/stripe-webhook/", stripe_webhook, name="stripe-webhook"),
     path("api/health/", health_check, name="health-check"),
-    static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
 ]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
