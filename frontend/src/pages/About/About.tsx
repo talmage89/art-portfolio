@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './About.scss';
 
-import image_1228 from '~/assets/IMG_1228.jpg';
+import about_img from '~/assets/cc65d761-1ea5-41c6-a9fe-c14d4a5d0ab9.jpg';
 
 export const About = () => {
   const [imageLoaded, setImageLoaded] = React.useState(false);
@@ -17,7 +17,7 @@ export const About = () => {
             />
           )}
           <img 
-            src={image_1228} 
+            src={about_img} 
             alt="Stephanie Bergeson"
             style={{ display: imageLoaded ? 'block' : 'none' }}
             onLoad={() => setImageLoaded(true)}
