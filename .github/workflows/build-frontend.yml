@@ -13,6 +13,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    environment:
+      name: github-pages
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -29,8 +32,12 @@ jobs:
         working-directory: frontend
 
       - name: Build frontend
-        run: npm run build
         working-directory: frontend
+        env:
+          VITE_API_HOST: ${{ secrets.VITE_API_HOST }}
+          VITE_ENABLE_SENTRY: ${{ secrets.VITE_ENABLE_SENTRY }}
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+        run: npm run build
 
       - name: Upload build artifacts
         uses: actions/upload-pages-artifact@v4
