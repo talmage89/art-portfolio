@@ -9,17 +9,16 @@ from rest_framework.routers import DefaultRouter
 from artwork.views import (
     ArtworkViewSet,
     ImageViewSet,
-    TestEmailSendView,
-    PreviewEmailTemplateView,
 )
 from payments.views import CreateCheckoutSessionView, stripe_webhook, health_check
 
+urlpatterns = static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 router = DefaultRouter()
 router.register(r"artworks", ArtworkViewSet)
 router.register(r"images", ImageViewSet)
 
-urlpatterns = [
+urlpatterns += [
     path("api/", include(router.urls)),
     path("api/auth/", include("rest_framework.urls"), name="api-auth"),
     path(
@@ -31,5 +30,3 @@ urlpatterns = [
     path("api/health/", health_check, name="health-check"),
     path("", admin.site.urls),
 ]
-
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
