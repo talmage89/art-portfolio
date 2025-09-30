@@ -13,14 +13,7 @@ env.read_env(os.path.join(BASE_DIR, ".env"))
 
 IS_COLLECTSTATIC = "collectstatic" in sys.argv
 
-SECRET_KEY = env("DJANGO_SECRET_KEY", default=None)
-
-if not SECRET_KEY:
-    if IS_COLLECTSTATIC:
-        SECRET_KEY = "dummykey"
-    else:
-        raise RuntimeError("DJANGO_SECRET_KEY must be set at runtime!")
-
+SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 INSTALLED_APPS = [
     "artwork.apps.ArtworkConfig",
@@ -38,6 +31,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "utils.db_logging_middleware.DatabaseQueryLoggingMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -158,5 +152,55 @@ STORAGES = {
     },
     "staticfiles": {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
+#
+# Logging Configuration for Performance Monitoring
+#
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {name} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {asctime} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+        "db_console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "db_queries": {
+            "handlers": ["db_console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "startup": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.db.backends": {
+            "handlers": ["db_console"],
+            "level": "DEBUG" if env.bool("DEBUG_SQL", default=False) else "WARNING",
+            "propagate": False,
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
     },
 }
