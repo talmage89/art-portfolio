@@ -19,6 +19,7 @@ from .models import Artwork, Image, Order
 from .permissions import IsAdminOrReadOnly
 from .serializers import (
     ArtworkSerializer,
+    ArtworkListSerializer,
     ImageSerializer,
 )
 
@@ -50,6 +51,12 @@ class ArtworkViewSet(viewsets.ReadOnlyModelViewSet):
     parser_classes = (MultiPartParser, FormParser)
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
     filterset_class = ArtworkFilter
+
+    def get_serializer_class(self):
+        """Use optimized serializer for list view"""
+        if self.action == "list":
+            return ArtworkListSerializer
+        return ArtworkSerializer
 
     def perform_create(self, serializer):
         artwork = serializer.save()
