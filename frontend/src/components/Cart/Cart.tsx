@@ -27,7 +27,7 @@ export const Cart = (props: CartProps) => {
   function handleCheckout() {
     setLoading(true);
     http
-      .post('/api/create-checkout-session/', { product_ids: props.items.map((item) => item.id) })
+      .post('/stripe/checkout', { artwork_ids: props.items.map((item) => item.id) })
       .then((res) => (window.location.href = res.data.url))
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));

@@ -10,7 +10,8 @@ export type Artwork = {
   category: string;
   status: string;
   price_cents: number;
-  creation_date: string;
+  created_at: string;
+  updated_at: string;
   images: Image[];
   image_dimensions?: [number, number];
 };
